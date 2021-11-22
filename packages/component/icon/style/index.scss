@@ -1,0 +1,54 @@
+@import '../../style/index.scss';
+
+$rotate-list: 90, 180, 270, horizontal, vertical, both;
+@keyframes fa-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+:host {
+	display: inline-block;
+	font-size: inherit;
+	.#{$icon} {
+		display: block;
+		width: 1em;
+		height: 1em;
+		margin: auto;
+		fill: currentColor;
+		overflow: hidden;
+	}
+	//animation
+	&:host([animation='spin']) {
+		animation: fa-spin 2s infinite linear;
+	}
+	&:host([animation='pulse']) {
+		animation: fa-spin 1s infinite steps(8);
+	}
+	//rotate
+	&:host([rotate='90']) {
+		transform: rotate(90deg);
+	}
+	&:host([rotate='180']) {
+		transform: rotate(180deg);
+	}
+	&:host([rotate='270']) {
+		transform: rotate(270deg);
+	}
+	&:host([rotate='horizontal']) {
+		transform: scaleX(-1);
+	}
+	&:host([rotate='vertical']) {
+		transform: scaleY(-1);
+	}
+	&:host([rotate='vertical']) {
+		transform: scaleY(-1);
+	}
+	&:host([rotate='both']) {
+		transform: scale(-1);
+	}
+}

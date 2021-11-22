@@ -1,0 +1,120 @@
+@import '../../style/index.scss';
+$size-list: 'large', 'medium', 'small';
+$size-height-list: 28px, 22px, 18px;
+$size-font-list: 14px, 12px, 10px;
+$size-circle-list: 22px, 18px, 16px;
+$zise-top-list: 3px, 2px, 1px;
+$size-dot-list: 8px, 6px, 4px;
+
+@mixin size-context($i) {
+  height: nth($size-height-list, $i);
+  font-size: nth($size-font-list, $i);
+  min-width: 50px;
+  user-select: none;
+  .#{$switch}-wrapper {
+    padding: 0 6px 0 30px;
+    &::before {
+      width: nth($size-circle-list, $i);
+      height: nth($size-circle-list, $i);
+      top: nth($zise-top-list, $i);
+      left: 2px;
+      right: auto;
+    }
+    &::after {
+      width: nth($size-dot-list, $i);
+      height: nth($size-dot-list, $i);
+      top: calc(50% - #{nth($size-dot-list, $i) / 2});
+      left: #{2px + (nth($size-circle-list, $i) - nth($size-dot-list, $i))/2};
+    }
+    &.active {
+      padding: 0 30px 0 6px;
+      &::before {
+        left: auto;
+        right: 2px;
+      }
+      &::after {
+        left: auto;
+        right: #{2px + (nth($size-circle-list, $i) - nth($size-dot-list, $i))/2};
+      }
+    }
+  }
+}
+
+:host {
+  border-radius: 999px;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  cursor: pointer;
+  @for $i from 1 to length($size-list) + 1 {
+    @if (nth($size-list, $i) == medium) {
+      @include size-context($i);
+    } @else {
+      &:host([size='#{nth($size-list,$i)}']) {
+        @include size-context($i);
+      }
+    }
+  }
+  .#{$switch}-checkbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+  }
+  .#{$switch}-wrapper {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: #eee;
+    border-radius: inherit;
+    position: relative;
+    transition: all $animation-duration-base linear;
+    .n-switch-inner {
+      display: inline-flex;
+      align-items: center;
+      height: 100%;
+      user-select: none;
+    }
+    &::before {
+      content: '';
+      position: absolute;
+      border-radius: inherit;
+      background-color: #fff;
+      box-shadow: 0 2px 4px 0 rgba(0, 38, 10, 0.2);
+      transition: all $animation-duration-base
+        cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 1;
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      z-index: 2;
+      border-radius: inherit;
+      box-shadow: 0 2px 4px 0 rgba(0, 38, 10, 0.2);
+      transition: all $animation-duration-base
+        cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      background-color: $color-success;
+      opacity: 0;
+    }
+    &:active {
+      &::before {
+        width: calc(100% - 4px);
+      }
+      &::after {
+        opacity: 1;
+        width: 50%;
+      }
+    }
+  }
+  &:host([disabled]) {
+    cursor: not-allowed;
+    .#{$switch}-wrapper {
+      &::after {
+        background-color: $color-info;
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+// Global style
+@import './index.scss';
+@import './normalize';
+@import './reset';
+
+$elements: $button, $icon, $badge, $link;
+
+@each $k in $elements {
+  #{$k} {
+    @each $t in $elements {
+      &+#{$t} {
+          margin-left: 10px;
+      }
+    }
+  }
+}
+
+
+i {
+  font-style: normal;
+}
+input,
+textarea {
+  &:focus {
+    outline: none;
+  }
+}

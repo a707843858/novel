@@ -1,0 +1,79 @@
+//name
+$prefix:'n-';
+$button:#{$prefix}button;
+$button-group:#{$button}-group;
+$badge:#{$prefix}badge;
+$icon:#{$prefix}icon;
+$menu: #{$prefix}menu;
+$menu-item: #{$menu}-item;
+$submenu: #{$prefix}submenu;
+$radio:#{$prefix}radio;
+$radio-group:#{$radio}-group;
+$link:#{$prefix}link;
+$switch:#{$prefix}switch;
+
+
+// color
+$gray-2: #f2f3f5;
+$gray-3: #ebedf0;
+$gray-4: #dcdee0;
+$gray-5: #c8c9cc;
+$gray-6: #969799;
+$gray-7: #646566;
+$color-background:#f7f8fa;
+$color-text:#323233;
+$color-white: #fff;
+$color-success: #4caf50;
+$color-primary: #2196f3;
+$color-info:#909399;
+$color-warning: #ff9900;
+$color-danger: #ed3321;
+$color-success-light: mix($color-white, $color-success, 80%) !default;
+$color-primary-light: mix($color-white, $color-primary, 80%) !default;
+$color-info-light: mix($color-white, $color-info, 80%) !default;
+$color-warning-light: mix($color-white, $color-warning, 80%) !default;
+$color-danger-light: mix($color-white, $color-danger, 80%) !default;
+$color-success-lighter: mix($color-white, $color-success, 90%) !default;
+$color-primary-lighter: mix($color-white, $color-primary, 90%) !default;
+$color-info-lighter: mix($color-white, $color-info, 90%) !default;
+$color-warning-lighter: mix($color-white, $color-warning, 90%) !default;
+$color-danger-lighter: mix($color-white, $color-danger, 90%) !default;
+$color-disabled: #e6e6e6;
+$color-error: #f56c6c;
+$color-border: #c0c4cc;
+
+//font
+$base-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+  Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB',
+  'Microsoft Yahei', sans-serif;
+
+/** breakpoints **/
+$--sm: 768px !default;
+$--md: 992px !default;
+$--lg: 1200px !default;
+$--xl: 1920px !default;
+
+$--breakpoints: (
+  'xs': (
+    max-width: $--sm - 1,
+  ),
+  'sm': (
+    min-width: $--sm,
+  ),
+  'md': (
+    min-width: $--md,
+  ),
+  'lg': (
+    min-width: $--lg,
+  ),
+  'xl': (
+    min-width: $--xl,
+  ),
+);
+
+//animation
+$animation-duration-base: 0.3s;
+$animation-duration-fast: 0.2s;
+$animation-timing-function-enter: ease-out;
+$animation-timing-function-leave: ease-in;
+

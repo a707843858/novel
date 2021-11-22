@@ -1,0 +1,226 @@
+@import '../../style/index.scss';
+
+$hover-opacity: 0.65;
+$label-plain-opacity: 0.3;
+$border-raduis: 2px;
+$theme-list: (
+  'info': $color-info,
+  'primary': $color-primary,
+  'success': $color-success,
+  'warning': $color-warning,
+  'danger': $color-danger,
+);
+$size-list: 'huge', 'big', 'large', 'medium', 'small', 'mini';
+$size-height-list: 52px, 46px, 40px, 34px, 28px, 24px;
+$size-font-list: 20px, 18px, 16px, 14px, 12px, 10px;
+$size-padding-list: 24px, 18px, 16px, 10px, 8px, 6px;
+
+@mixin normal-disabled {
+  color: rgba(0, 0, 0, 0.3);
+  cursor: not-allowed;
+  background-color: $color-disabled;
+  box-shadow: 0 0 2px $color-disabled;
+  border-color: transparent;
+}
+
+@mixin plain-disabled {
+  color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  cursor: not-allowed;
+}
+
+@mixin dashed-disabled {
+  color: rgba(0, 0, 0, 0.3);
+  border: 1px dashed rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  cursor: not-allowed;
+}
+
+@mixin text-disabled {
+  color: rgba(0, 0, 0, 0.3);
+  cursor: not-allowed;
+}
+
+@mixin normal-theme($color) {
+  button {
+    color: #fff;
+    background-color: rgba($color, $hover-opacity);
+    box-shadow: 0 0 2px 0 rgba($color, $hover-opacity);
+    border: none;
+    &:enabled {
+      &:hover,
+      &:active,
+      &:focus {
+        background-color: $color;
+        box-shadow: 0 0 2px 0 $color;
+      }
+    }
+
+    &:disabled {
+      @include normal-disabled();
+    }
+  }
+}
+
+@mixin plain-theme($color) {
+  &:host([type='plain']) {
+    button {
+      color: rgba($color, $hover-opacity);
+      box-shadow: 0 0 2px 0 rgba($color, $hover-opacity);
+      background-color: #fff;
+      &:enabled {
+        &:hover,
+        &:focus,
+        &:active {
+          color: $color;
+          text-shadow: 0 0 1px rgba($color, 0.3);
+          box-shadow: 0 0 2px 0 $color, inset 0 0 1px 0 $color;
+        }
+      }
+
+      &:disabled {
+        @include plain-disabled();
+      }
+    }
+  }
+}
+
+@mixin dashed-theme($color) {
+  &:host([type='dashed']) {
+    button {
+      border: 1px dashed rgba($color, $hover-opacity);
+      color: rgba($color, $hover-opacity);
+      background-color: #fff;
+      &:enabled {
+        &:hover,
+        &:focus,
+        &:active {
+          color: $color;
+          text-shadow: 0 0 1px rgba($color, 0.3);
+          border: 1px dashed $color;
+        }
+      }
+
+      &:disabled {
+        @include dashed-disabled();
+      }
+    }
+  }
+}
+
+@mixin text-theme($color) {
+  &:host([type='text']) {
+    button {
+      color: $color;
+      background-color: transparent;
+      box-shadow: none;
+      &:enabled {
+        &:hover,
+        &:focus,
+        &:active {
+          &::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: $color;
+            z-index: 1;
+          }
+        }
+      }
+
+      &:disabled {
+        @include text-disabled();
+      }
+    }
+  }
+}
+
+@mixin size-content($i) {
+	button {
+		height: nth($size-height-list, $i);
+		font-size: nth($size-font-list, $i);
+		padding: 0 nth($size-padding-list, $i);
+		.#{$button}_wrapper {
+			margin: 0 nth($size-padding-list, $i) / 2;
+		}
+	}
+}
+
+@mixin theme-content($color) {
+  @include normal-theme($color);
+  @include dashed-theme($color);
+  @include plain-theme($color);
+  @include text-theme($color);
+}
+
+:host {
+  display: inline-block;
+  // margin: 0 10px 10px 0;
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    text-align: center;
+    border-radius: $border-raduis;
+    background-color: transparent;
+    cursor: pointer;
+    -webkit-appearance: none;
+    border: none;
+    &:focus {
+      outline: 0;
+    }
+    .#{$button}_wrapper {
+      display: inline-flex;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      .#{$prefix}icon {
+        line-height: 1;
+        margin: 0 6px;
+      }
+    }
+  }
+  // round
+  &:host([round]) {
+    border-radius: 999px;
+  }
+  //size
+  @for $i from 1 to length($size-list) + 1 {
+    //medium
+    @if nth($size-list, $i) == medium {
+      @include size-content($i);
+    } @else {
+      //other
+      &:host([size='#{nth($size-list, $i)}']) {
+        @include size-content($i);
+      }
+    }
+  }
+  //theme && type
+  @each $theme-key, $color in $theme-list {
+    //info
+    @if $theme-key == info {
+      @include theme-content($color);
+    } @else {
+      //other
+      &:host([theme='#{$theme-key}']) {
+        @include theme-content($color);
+      }
+    }
+  }
+  &:host([disabled]) {
+    cursor: not-allowed;
+  }
+}

@@ -1,0 +1,61 @@
+@import '../../style/index.scss';
+$themes: (
+  'info': $color-info,
+  'primary': $color-primary,
+  'success': $color-success,
+  'warning': $color-warning,
+  'danger': $color-danger,
+);
+$hover-opacity: 0.65;
+
+@mixin theme-context($color) {
+  a {
+    color: rgba($color,$hover-opacity);
+    &:hover,&:active,&:focus {
+      color: $color;
+      border-bottom: 1px solid $color;
+    }
+    &[disabled]{
+      cursor: not-allowed;
+      &:hover,&:active,&:focus {
+        color: rgba($color,$hover-opacity);
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  font-size: inherit;
+  cursor: pointer;
+  a {
+    border-bottom: 1px solid transparent;
+  }
+  //icon 
+  .n-link-icon {
+    margin-right: 5px;
+  }
+  @each $key, $value in $themes {
+    @if $key == info {
+      @include theme-context($value);
+    } @else {
+      &:host([theme='#{$key}']) {
+        @include theme-context($value);
+      }
+    }
+  }
+  //disUnderline
+  &:host([disunderline]){
+    a {
+      &:hover,&:active,&:focus {
+        border-bottom: 1px  solid transparent;
+      }
+    }
+  }
+  //disabled 
+  &:host([disabled]){
+    cursor: not-allowed;
+  }
+}

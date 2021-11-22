@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "declaration": false,
+    "emitDecoratorMetadata":true,
+    "experimentalDecorators": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "baseUrl": "./",
+    "strict": true,
+    "paths": {
+      "@/*": ["packages/*"],
+      "@@/*": ["packages/.umi/*"]
+    },
+  },
+  "exclude": [
+    "node_modules",
+    "lib",
+    "es",
+    "dist",
+    "typings",
+    "**/__test__",
+    "test",
+    "docs",
+    "tests",
+    "tslib"
+  ],
+  "lib": [
+    "es5",
+    "es2015",
+    "es2016",
+    "es2017",
+    "es2018",
+    "es2021",
+    "dom",
+    "esnext"
+  ],
+  "include": ["packages/**/*.ts", "packages/**/*.tsx", "packages/**/*.d.ts"],
+}
