@@ -1,4 +1,5 @@
 @import '../../style/index.scss';
+@import './fontawesome.scss';
 
 $rotate-list: 90, 180, 270, horizontal, vertical, both;
 @keyframes fa-spin {
@@ -15,12 +16,10 @@ $rotate-list: 90, 180, 270, horizontal, vertical, both;
 	display: inline-block;
 	font-size: inherit;
 	.#{$icon} {
-		display: block;
-		width: 1em;
-		height: 1em;
+		display:inline-block;
 		margin: auto;
 		fill: currentColor;
-		overflow: hidden;
+		padding: 0 2px;
 	}
 	//animation
 	&:host([animation='spin']) {

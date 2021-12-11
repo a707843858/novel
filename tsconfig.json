@@ -9,17 +9,18 @@
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "declaration": false,
-    "emitDecoratorMetadata":true,
+    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "jsx": "preserve",
     "esModuleInterop": true,
     "sourceMap": false,
+    "resolveJsonModule": true,
     "baseUrl": "./",
     "strict": true,
     "paths": {
       "@/*": ["packages/*"],
       "@@/*": ["packages/.umi/*"]
-    },
+    }
   },
   "exclude": [
     "node_modules",
@@ -43,5 +44,5 @@
     "dom",
     "esnext"
   ],
-  "include": ["packages/**/*.ts", "packages/**/*.tsx", "packages/**/*.d.ts"],
+  "include": ["packages/**/*.ts", "packages/**/*.tsx", "packages/**/*.d.ts"]
 }

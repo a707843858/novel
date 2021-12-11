@@ -1,41 +1,73 @@
 @import '../../style/index.scss';
 $size-list: 'large', 'medium', 'small';
-$size-height-list: 28px, 22px, 18px;
-$size-font-list: 14px, 12px, 10px;
-$size-circle-list: 22px, 18px, 16px;
-$zise-top-list: 3px, 2px, 1px;
-$size-dot-list: 8px, 6px, 4px;
+// $size-height-list: 28px, 22px, 18px;
+$size-height-list: 40px, 32px, 28px;
+$size-font-list: 16px, 14px, 12px;
+$size-circle-list: 28px, 22px, 20px;
+$zise-top-list: 6px, 5px, 4px;
+$zise-left-list: 6px, 5px, 4px;
+$size-dot-list: 14px, 11px, 10px;
+$size-min-width-list: 80px, 60px, 50px;
 
 @mixin size-context($i) {
   height: nth($size-height-list, $i);
   font-size: nth($size-font-list, $i);
-  min-width: 50px;
+  min-width: nth($size-min-width-list, $i);
   user-select: none;
-  .#{$switch}-wrapper {
+  &.#{$switch} {
     padding: 0 6px 0 30px;
+
     &::before {
       width: nth($size-circle-list, $i);
       height: nth($size-circle-list, $i);
       top: nth($zise-top-list, $i);
-      left: 2px;
+      left: nth($zise-left-list, $i);
       right: auto;
+      // box-shadow: ;
     }
     &::after {
       width: nth($size-dot-list, $i);
       height: nth($size-dot-list, $i);
-      top: calc(50% - #{nth($size-dot-list, $i) / 2});
-      left: #{2px + (nth($size-circle-list, $i) - nth($size-dot-list, $i))/2};
+      top: calc(
+        #{nth($zise-top-list, $i)} + #{(
+            nth($size-circle-list, $i) - nth($size-dot-list, $i)
+          ) / 2}
+      ); //calc(50% - #{nth($size-dot-list, $i) / 2});
+      left: calc(
+        #{nth($zise-top-list, $i)} + #{(
+            nth($size-circle-list, $i) - nth($size-dot-list, $i)
+          ) / 2}
+      );
+      background-color: #9baacf;
     }
+    &:active {
+      &::before {
+        width: calc(100% - #{nth($zise-left-list, $i) * 2});
+      }
+      &::after {
+        opacity: 1;
+        width: 50%;
+      }
+    }
+
     &.active {
       padding: 0 30px 0 6px;
       &::before {
         left: auto;
-        right: 2px;
+        right: nth($zise-left-list, $i);
       }
       &::after {
         left: auto;
         right: #{2px + (nth($size-circle-list, $i) - nth($size-dot-list, $i))/2};
       }
+    }
+
+    .#{$switch}__input {
+      position: absolute;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      margin: 0;
     }
   }
 }
@@ -46,15 +78,7 @@ $size-dot-list: 8px, 6px, 4px;
   display: inline-block;
   vertical-align: top;
   cursor: pointer;
-  @for $i from 1 to length($size-list) + 1 {
-    @if (nth($size-list, $i) == medium) {
-      @include size-context($i);
-    } @else {
-      &:host([size='#{nth($size-list,$i)}']) {
-        @include size-context($i);
-      }
-    }
-  }
+
   .#{$switch}-checkbox {
     position: absolute;
     top: 0;
@@ -64,7 +88,7 @@ $size-dot-list: 8px, 6px, 4px;
     width: 100%;
     height: 100%;
   }
-  .#{$switch}-wrapper {
+  .#{$switch} {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
@@ -83,7 +107,7 @@ $size-dot-list: 8px, 6px, 4px;
       position: absolute;
       border-radius: inherit;
       background-color: #fff;
-      box-shadow: 0 2px 4px 0 rgba(0, 38, 10, 0.2);
+      // box-shadow: 0 2px 4px 0 rgba(0, 38, 10, 0.2);
       transition: all $animation-duration-base
         cubic-bezier(0.25, 0.46, 0.45, 0.94);
       z-index: 1;
@@ -93,19 +117,32 @@ $size-dot-list: 8px, 6px, 4px;
       position: absolute;
       z-index: 2;
       border-radius: inherit;
-      box-shadow: 0 2px 4px 0 rgba(0, 38, 10, 0.2);
+      // box-shadow: 0 2px 4px 0 rgba(0, 38, 10, 0.2);
       transition: all $animation-duration-base
         cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      background-color: $color-success;
-      opacity: 0;
+      // background-color: $color-success;
+      // opacity: 0;
     }
-    &:active {
+    // &:active {
+    //   &::before {
+    //     width: calc(100% - 4px);
+    //   }
+    //   &::after {
+    //     opacity: 1;
+    //     width: 50%;
+    //   }
+    // }
+
+    //zoosemy
+    &.is-zoosemy {
+      background-color: #e4ebf5;
+      box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
       &::before {
-        width: calc(100% - 4px);
+        box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
       }
-      &::after {
-        opacity: 1;
-        width: 50%;
+      &:active {
+        box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
+          inset -0.1em -0.1em 0.12em #fff;
       }
     }
   }
@@ -114,6 +151,20 @@ $size-dot-list: 8px, 6px, 4px;
     .#{$switch}-wrapper {
       &::after {
         background-color: $color-info;
+      }
+    }
+  }
+
+  .#{$switch} {
+    @for $i from 1 to length($size-list) + 1 {
+      @if (nth($size-list, $i) == medium) {
+        @include size-context($i);
+      } @else {
+        &.is-#{nth($size-list, $i)} {
+          @include size-context($i);
+        }
+        // &:host([size='#{nth($size-list,$i)}']) {
+        // }
       }
     }
   }

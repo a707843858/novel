@@ -67,7 +67,6 @@ export function define(options: any, elCtor: CustomElementConstructor) {
   // }
 }
 
-
 export const defineComponent = function (
   elCtor: CustomElementConstructor,
   options: Options,
@@ -87,6 +86,7 @@ export const defineComponent = function (
   elCtor.prototype.shadowMode = options?.mode;
   // console.log( elCtor.prototype.props);
   customElements.define(options.name, elCtor);
+  componentMap[options.name] = elCtor;
 };
 
 export default { define, defineComponent };

@@ -8,7 +8,7 @@ export type VNodePath =
   | 'update'
   | 'insert';
 
-export  class VNodeProps {
+export class VNodeProps {
   type: string = '';
   props?: { [k: string]: any };
   key?: VNodeKey;
@@ -21,15 +21,15 @@ export  class VNodeProps {
 type T = keyof VNodeProps;
 
 export default class VNode {
-  [x:string]: VNodeProps[T];
+  [x: string]: VNodeProps[T];
 
   constructor(props?: VNodeProps) {
-    this.patch = 'add';
     if (props) {
       for (let p in props) {
-        this[p] = props[p];
+        if (props[p]) {
+          this[p] = props[p];
+        }
       }
     }
-    // console.log(props,'this.p');
   }
 }

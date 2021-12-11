@@ -1,84 +1,29 @@
-import {  CustomComponent, defineComponent } from './core';
-// import Style from './component/badge/style/index.scss';
-import 'reflect-metadata';
-import { isNum } from './component/utils/utils';
-import { Prop, Component } from './core/decorators/decorators';
-// import 'reflect-metadata';
-
-interface vNodeType {
-  tag?: any;
-  attributes?: Map<any, any>;
-  children?: string | any[];
+function Prop() {
+  return (target: any, key: any) => {
+    target[key] = '';
+  };
 }
 
-interface NodeTree {
-  node?: HTMLElement;
-  vNode?: vNodeType;
-}
+class B {}
 
-
-class Button extends CustomComponent  {//
-  // @Prop() value: string | number = 2;
-  // @Prop() max: number = 1 ;
-  // @Prop() dot: boolean = false;
-
-
-  // constructor() {
-  //   super();
-  // }
-
-
-  render(): NodeTree {
-
-    console.log(this.cssStyle,'vvvvvvvvvvvv');
-    const { value, dot, max } = this;
-
-    const NodeDot = function () {
-      if (dot) {
-        return <div className="n-badge_dot_content"></div>;
-      }
-      return '';
-    };
-    const NodeContext = () => {
-      if (![undefined, '', -1].includes(value) && !dot) {
-        return (
-          <div className="n-badge_content">
-            {value && isNum(value) && max && value > max ? `${max}+` : value}
-          </div>
-        );
-      }
-      return '';
-    };
-    return (
-      <div className="n-badge">
-        {NodeDot()}
-        {NodeContext()}
-        <slot></slot>
-      </div>
-    ); //${styleInner}
-  }
-
-  // static get observedAttributes() {
-  //   return ['value'];
-  // }
-
-  // attributeChangedCallback(name: any, oldKey: any, newKey: any) {
-  //   console.log(name, oldKey, JSON.parse(newKey));
-  // }
+const C = {
+  a: 'b',
+  c: 'd',
 };
 
+const { a } = C;
 
-export const ButtonComponent = defineComponent(
-  Button,
-  {
-    name: 'n-a',
-  },
-);
+class A extends B {
+  @Prop() a: any = { a: '2' };
+  et: any;
+  c: any;
 
-// define('n-a',Button);
+  aa() {
+    const { et, c } = this,
+      d = 'v';
+    const { a } = this;
+    this.a = 'c';
+  }
+}
 
-// if (!window.customElements.get('n-a')) {
-//   window.customElements.define('n-a', Button);
-// }
-
-export default ButtonComponent;
+console.log(A);

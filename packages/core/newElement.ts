@@ -1,5 +1,5 @@
 import VNode from './VNode';
-import { insertBefore } from './utils';
+import { insertBefore, camelCaseToHyphen } from './utils';
 
 interface VNodeQueueItemType {
   old?: VNode[];
@@ -7,26 +7,28 @@ interface VNodeQueueItemType {
   parentEl: HTMLElement;
 }
 
-let VNodeQueue: VNodeQueueItemType[] = [],
-  renderQueue: {
-    container: HTMLElement;
-    vNode: VNode;
-  }[] = [];
+let VNodeQueue: VNodeQueueItemType[] = [];
 
-export const createVirtalElement = function (
+export const createVirtualElement = function (
   type: any,
   props: { [k: string]: any },
   ...children: Array<any>
 ) {
-  children = children.map((child) => {
+  const vChildren = children.map((child) => {
     return typeof child === 'object'
       ? new VNode(child)
       : new VNode({ type: 'TEXT', props: { nodeValue: child } });
   });
+  // children = children.map((child) => {
+  //   console.log(child,'=dd');
+  //   return typeof child === 'object'
+  //     ? new VNode(child)
+  //     : new VNode({ type: 'TEXT', props: { nodeValue: child } });
+  // });
   return new VNode({
     type,
     props: props,
-    children: children?.length ? children : undefined,
+    children: vChildren.length ? vChildren : undefined,
   });
 };
 
@@ -43,10 +45,10 @@ const requestIdleCallback = function (
 
 export const newRender = function (
   container: any,
-  virtalDoM?: VNode | null,
-  newVirtalDom?: VNode | null,
+  VirtualDom?: VNode | null,
+  newVirtualDom?: VNode | null,
 ) {
-  return new Promise((reslove) => {
+  return new Promise((resolve) => {
     const nextVNode = function () {
       if (!VNodeQueue.length) {
         return;
@@ -60,16 +62,15 @@ export const newRender = function (
 
       let oldStartIndex = 0,
         newStartIndex = 0,
-        oldEndIndex = list.length - 1,
-        newEndIndex = newList.length - 1;
+        oldEndIndex = list.length ? list.length - 1 : 0,
+        newEndIndex = newList.length ? newList.length - 1 : 0;
       let oldStartNode: VNode | undefined = list[0],
         oldEndNode: VNode | undefined = list[oldEndIndex],
         newStartNode: VNode | undefined = newList[0],
         newEndNode: VNode | undefined = newList[newEndIndex];
       let idxInOld: VNode | undefined,
-        oldNodeMap: { [k: string]: VNode } | undefined;
+        oldNodeMap: { [k: string]: VNode } = {};
       // debugger;
-      // console.log('b');
       while (newStartIndex <= newEndIndex) {
         if (isSameNode(oldStartNode, newStartNode)) {
           //头头相同
@@ -92,7 +93,6 @@ export const newRender = function (
           oldEndNode = list[--oldEndIndex];
           newStartNode = newList[++newStartIndex];
         } else {
-          // console.log('B');
           //创建剩下的旧元素的map映射
           if (!oldNodeMap) {
             oldNodeMap = creatNodeMap(list, oldStartIndex, oldEndIndex);
@@ -105,20 +105,25 @@ export const newRender = function (
           //匹配成功
           if (idxInOld && isSameNode(idxInOld, newStartNode)) {
             idxInOld.children = [];
-            idxInOld.element.parentNode.removeChild(idxInOld.element);
+            idxInOld.element.parentNode.removeChild(<Node>idxInOld.element);
             // idxInOld.element = createElement(idxInOld);
             list.splice(oldStartIndex, 0, idxInOld);
             insertBefore(parentEl, idxInOld.element, oldStartNode.elm);
           } else {
             newStartNode.element = createElement(newStartNode);
+
             list.splice(oldStartIndex, 0, newStartNode);
-            // console.log(parentEl, 'container');
+            // console.log(parentEl,newStartNode.element, 'container');
             insertBefore(
               parentEl,
               newStartNode.element,
               oldStartNode?.element || '',
             );
-            patchChildren(newStartNode.element, [], newStartNode.children);
+            patchChildren(
+              newStartNode.element,
+              undefined,
+              newStartNode.children,
+            );
           }
           idxInOld = undefined;
           oldEndNode = list[++oldEndIndex];
@@ -130,15 +135,16 @@ export const newRender = function (
       if (oldStartIndex <= oldEndIndex) {
         for (let i = oldEndIndex; i >= oldStartIndex; i--) {
           const item = list[i];
-          // console.log(item,'item');
-          if (item.element) {
-            item.element.parentNode.removeChild(item.element);
-          } else {
-            item.element = createElement(item);
-            parentEl.append(item.element);
-            patchChildren(item.element, item.children, []);
+          if (item) {
+            if (item.element) {
+              item.element.parentNode.removeChild(<Node>item.element);
+            } else {
+              item.element = createElement(item);
+              parentEl.append(item.element);
+              patchChildren(item.element, item.children, []);
+            }
+            list.splice(i, 1);
           }
-          list.splice(i, 1);
         }
       }
 
@@ -149,13 +155,10 @@ export const newRender = function (
       if (!old || !newV) {
         return false;
       }
-      // console.log(old,newV,'aaa');
 
       return (
         (old.key && newV.key && old.key === newV.key) ||
-        (old.type === newV.type &&
-          old.props &&
-          newV.props )
+        (old.type === newV.type && old.props && newV.props)
       );
     };
 
@@ -189,7 +192,7 @@ export const newRender = function (
       if (old?.props && newV?.props) {
         old.props = newV.props;
         old.patch = 'update';
-        updateProperties(old.element,newV.props);
+        updateProperties(old.element, newV.props);
         // renderQueue.push({ container: parentEL, vNode: old });
       }
       // if {
@@ -209,7 +212,13 @@ export const newRender = function (
       old?: VNode[],
       newV?: VNode[],
     ) {
-      VNodeQueue.push({ old: old || [], new: newV || [], parentEl: parentEl });
+      if (old || newV) {
+        VNodeQueue.push({
+          old: old || [],
+          new: newV || [],
+          parentEl: parentEl,
+        });
+      }
     };
 
     /** 为旧节创建映射 */
@@ -249,7 +258,7 @@ export const newRender = function (
       }
 
       if (!VNodeQueue.length) {
-        reslove(true);
+        resolve(true);
       }
 
       //结束任务,开始渲染
@@ -280,13 +289,11 @@ export const newRender = function (
 
     VNodeQueue.push({
       parentEl: container,
-      old: virtalDoM ? [virtalDoM] : [],
-      new: newVirtalDom ? [newVirtalDom] : [],
+      old: VirtualDom ? [VirtualDom] : [],
+      new: newVirtualDom ? [newVirtualDom] : [],
     });
     requestIdleCallback(loopTask);
-
   });
-  // console.log(virtalDoM, 'vvvv');
 };
 
 export const createElement = function (vnode: VNode) {
@@ -297,7 +304,7 @@ export const createElement = function (vnode: VNode) {
   }
 
   if (vnode.type === 'TEXT') {
-    el = document.createTextNode(vnode.props.nodeValue || '');
+    el = document.createTextNode(JSON.stringify(vnode.props.nodeValue) || '');
   } else {
     el = document.createElement(vnode.type);
   }
@@ -313,14 +320,22 @@ export const updateProperties = function (
   dom: any,
   props?: { [k: string]: any },
 ) {
-  if (!props) {
+  if (!props || !dom) {
     return;
   }
 
   Object.keys(props).map((key) => {
     if (typeof props[key] === 'function') {
       dom.addEventListener(key.slice(2).toLowerCase(), props[key], false);
+    } else if (key === 'style') {
+      let style = '';
+      Object.keys(props.style).map((s) => {
+        style += `${camelCaseToHyphen(s)}:${props.style[s]};`;
+      });
+
+      dom.style = style;
     } else if (key !== 'children') {
+      // console.log(key, dom, props[key]);
       // let name = key === 'className' ? 'class' : '';
       dom[key] = props[key];
     }

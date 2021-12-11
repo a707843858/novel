@@ -1,6 +1,7 @@
 import Style from './style/index.scss';
 import { Component, CustomComponent, Prop } from '../../core';
 import { isNum } from '../utils/utils';
+import classnames from 'classnames';
 
 // class BadgeProps {
 //   value: string | number = 'gg';
@@ -14,16 +15,14 @@ import { isNum } from '../utils/utils';
   style: Style.toString(),
 })
 export class Badge extends CustomComponent {
-  @Prop() value: string | number = '';
+  @Prop() value: number | string = '';
   @Prop() max: number = 0;
   @Prop() dot: boolean = false;
-
-  constructor() {
-    super();
-  }
+  @Prop() zoosemy: boolean = false;
 
   render() {
-    const { value, max, dot } = this;
+    const { value, max, dot, zoosemy } = this;
+    const classNames = classnames('n-badge', { 'is-zoosemy': zoosemy });
     const NodeDot = () => {
       if (dot) {
         return <div className="n-badge_dot_content"></div>;
@@ -41,7 +40,7 @@ export class Badge extends CustomComponent {
       return '';
     };
     return (
-      <div className="n-badge">
+      <div className={classNames}>
         {NodeDot()}
         {NodeContext()}
         <slot></slot>

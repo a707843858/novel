@@ -9,3 +9,7 @@ export function insertBefore(
     parentNode.appendChild(newNode);
   }
 }
+
+export function camelCaseToHyphen(str: string) {
+  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+}

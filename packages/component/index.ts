@@ -9,16 +9,16 @@ import { Switch } from './switch';
 export interface useProps {
   components?: { [k: string]: any };
 }
-const components: { [k: string]: any } = {  Icon, Badge,Button, Link };//, Switch
+const components: { [k: string]: any } = { Switch }; //,  Link,Badge,Icon,Button
 
 export const version = '1.0';
 
 export const use = function (props: useProps = {}) {
   //Add global style
   if (document) {
-    const stylee = document.createElement('style');
-    stylee.innerHTML = Style ? Style.toString() : '';
-    document.getElementsByTagName('head')?.item(0)?.appendChild(stylee);
+    const style = document.createElement('style');
+    style.innerHTML = Style ? Style.toString() : '';
+    document.getElementsByTagName('head')?.item(0)?.appendChild(style);
   }
   //Register component
   if (
@@ -38,7 +38,6 @@ export const use = function (props: useProps = {}) {
     }
   }
 };
-
 
 export default {
   use,

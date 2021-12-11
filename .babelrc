@@ -1,9 +1,7 @@
 {
   "presets": [
-    ["@babel/preset-react", { "pragma": "Novel.createVirtalElement" }]
+    "@babel/preset-env",
+    ["@babel/preset-react", { "pragma": "Novel.createVirtualElement" }]
   ],
-  "plugins": [
-    ["@babel/plugin-proposal-decorators", { "legacy": true }], // 这个是装饰器
-    ["@babel/plugin-proposal-class-properties", { "loose": false }]
-  ]
+  "plugins": [["@babel/plugin-transform-runtime", { "regenerator": true } ]]
 }
