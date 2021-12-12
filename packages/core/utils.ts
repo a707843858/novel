@@ -1,7 +1,7 @@
 export function insertBefore(
   parentNode: HTMLElement,
-  newNode?: HTMLElement,
-  referenceNode?: HTMLElement | null,
+  newNode?: HTMLElement | null | Text,
+  referenceNode?: HTMLElement | null | Text,
 ) {
   if (referenceNode && newNode && parentNode) {
     parentNode.insertBefore(newNode, referenceNode);

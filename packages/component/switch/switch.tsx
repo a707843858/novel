@@ -27,22 +27,14 @@ export class Switch extends HTMLElement {
 
   handleClick() {
     const { disabled } = this;
-    console.log(this.active, 'value');
     if (!disabled) {
-      debugger;
-      //@ts-ignore
       this.active = !this.active;
-      console.log(this.active);
+      console.log(this.active, 'value');
     }
   }
 
   render() {
-    // const { zoosemy, size, active } = this;
-    //@ts-ignore
-    const zoosemy = this.zoosemy.value,
-      size = this.size.value,
-      active = this.active.value;
-    console.log(zoosemy.value);
+    const { zoosemy, size, active } = this;
     const classNames = classnames('n-switch', (size && `is-${size}`) || '', {
       'is-active': active,
       'is-zoosemy': zoosemy,
@@ -52,7 +44,7 @@ export class Switch extends HTMLElement {
         <div className="n-switch-dot"></div>
         <input type="checkbox" className="n-switch__input"></input>
         <span className="n-switch-inner">
-          开 {this.value} {active}
+          {active ? '开' : '关'} {this.value} {active}
         </span>
       </div>
     );

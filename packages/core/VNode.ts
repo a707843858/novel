@@ -1,4 +1,4 @@
-export type VNodeElement = HTMLElement | Text | null;
+export type VNodeElement = HTMLElement | Text | null | undefined;
 export type VNodeKey = string | number | null;
 export type VNodePath =
   | 'add'
@@ -8,7 +8,7 @@ export type VNodePath =
   | 'update'
   | 'insert';
 
-export class VNodeProps {
+export default class VNode {
   type: string = '';
   props?: { [k: string]: any };
   key?: VNodeKey;
@@ -16,14 +16,8 @@ export class VNodeProps {
   children?: VNode[];
   patch?: VNodePath;
   [k: string]: any;
-}
 
-type T = keyof VNodeProps;
-
-export default class VNode {
-  [x: string]: VNodeProps[T];
-
-  constructor(props?: VNodeProps) {
+  constructor(props: { [k: string]: any } = {}) {
     if (props) {
       for (let p in props) {
         if (props[p]) {
@@ -32,4 +26,22 @@ export default class VNode {
       }
     }
   }
+
+  // setAttribute(key:string,val:any){
+  //   const {element} = this;
+  //   if(element instanceof  HTMLElement){
+  //     element?.setAttribute(key,val);
+  //   }else if(element instanceof Text){
+  //     element['nodeValue'] = val ;
+  //   }
+  // }
+  //
+  // removeAttribute(key:string){
+  //   const {element} = this;
+  //   if(element instanceof  HTMLElement){
+  //     element?.removeAttribute(key);
+  //   }else if(element instanceof Text){
+  //     element?.parentNode?.removeChild(element)
+  //   }
+  // }
 }

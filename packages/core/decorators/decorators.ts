@@ -1,6 +1,7 @@
 import { newRender } from '../newElement';
 import 'reflect-metadata';
-import { Reactive } from '../reactiveData';
+import { Reactive, definedReactive } from '../reactiveData';
+import VNode from '@/core/VNode';
 
 export interface ComponentOptions extends ElementDefinitionOptions {
   name: string;
@@ -55,15 +56,14 @@ export function Component(options: ComponentOptions) {
     if (!options.name) {
       throw new Error('Component must have tag name !');
     }
-    // Reflect.defineMetadata('shadowMode', options.mode, target.prototype);
-    // Reflect.defineMetadata('cssStyle', options.style, target.prototype);
-    // Reflect.defineMetadata('componentName', options.name, target.prototype);
 
     type ShadowMode = 'open' | 'closed';
     return class extends target {
       _shadowRoot: ShadowRoot;
       _installed: boolean = false;
       _cssStyle: string = options.style || '';
+      _virtualNode?: VNode;
+      _willUpdate: boolean = false;
       readonly mode: ShadowMode = options.mode || 'closed';
       readonly isComponent: boolean = true;
       readonly componentName: string = options.name;
@@ -79,8 +79,6 @@ export function Component(options: ComponentOptions) {
         this._beforeCreate();
         this.beforeCreate && this.beforeCreate();
         await this._create();
-        // const watcher = new Watcher(this, this._create.bind(this));
-        // console.log(watcher, 'watcher');
         this.created && this.created();
       }
 
@@ -122,29 +120,50 @@ export function Component(options: ComponentOptions) {
         const states: string[] = Reflect.getMetadata('states', this) || [];
         states.forEach((state) => {
           let origin = this[state];
-          this[state] = new Reactive(origin, this._create.bind(this));
-          this[
-            `set${state
-              .trim()
-              .toLowerCase()
-              .replace(state[0], state[0].toUpperCase())}`
-          ] = function (
-            curVal: any,
-            callback: (curVal: any, oldValue: any) => any,
-          ) {
-            const oldValue = this[state]['value'];
-            this[state]['value'] = curVal;
-            callback(curVal, oldValue);
-          };
+          this[state] = new Reactive(origin, () => this._update());
+          // this[
+          //   `set${state
+          //     .trim()
+          //     .toLowerCase()
+          //     .replace(state[0], state[0].toUpperCase())}`
+          // ] = async function (
+          //   curVal: any,
+          //   callback: (curVal: any, oldValue: any) => any,
+          // ) {
+          //   const oldValue = this[state]['value'];
+          //   this[state]['value'] = curVal;
+          //   await  this._create();
+          //   callback(curVal, oldValue);
+          // };
         });
       }
 
-      async _create() {
+      _create() {
         const virtualElement: any = this.render() || null;
-        console.log(this._virtalNode, virtualElement);
-        await newRender(this._shadowRoot, this._virtalNode, virtualElement);
-        this._virtalNode = virtualElement;
-        this._installed = true;
+        console.log(this._virtualNode, virtualElement);
+        newRender(this._shadowRoot, this._virtualNode, virtualElement, () => {
+          console.log(this._virtualNode, 'v');
+          if (!this._virtualNode) {
+            this._virtualNode = virtualElement;
+            this._installed = true;
+          }
+        });
+      }
+
+      _update() {
+        const that = this;
+        console.log(this._willUpdate, '_willUpdate');
+        if (this._willUpdate) {
+          return false;
+        }
+        this._willUpdate = true;
+        const virtualElement: any = this.render() || null;
+        console.log(this._virtualNode, virtualElement);
+        newRender(this._shadowRoot, this._virtualNode, virtualElement, () => {
+          that._willUpdate = false;
+          console.log(that._willUpdate, '_willn');
+        });
+        // this._virtualNode = virtualElement;
       }
 
       setAttribute(key: string, value: any) {
@@ -175,11 +194,15 @@ export function Component(options: ComponentOptions) {
       get shadowRoot() {
         return this._shadowRoot;
       }
-      set shadowRoot(val: any) {}
+      set shadowRoot(val: any) {
+        throw new Error(`Can't set  shadowRoot `);
+      }
       get installed() {
         return this._installed;
       }
-      set installed(val: boolean) {}
+      set installed(val: boolean) {
+        throw new Error(`Can't set  installed `);
+      }
     };
   };
   // return (target: any): typeof target => {
@@ -221,7 +244,6 @@ export function Watch(fnName: string, parameter?: any) {
 
 export function State() {
   return (target: any, key: string) => {
-    console.log(key, 'key');
     const states = Reflect.getMetadata('states', target) || [];
     states.push(key);
     Reflect.defineMetadata('states', states, target);

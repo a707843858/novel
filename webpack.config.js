@@ -6,7 +6,7 @@ const webpack = require('webpack');
 const createTransformer = require('./babel/novelPlugin.js');
 
 module.exports = {
-  entry: path.join(__dirname, 'packages/text.tsx'),
+  entry: path.join(__dirname, 'packages/index.ts'),
   output: {
     path: path.join(__dirname, './public/static'),
     filename: 'novel.js',
