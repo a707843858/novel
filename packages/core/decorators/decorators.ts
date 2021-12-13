@@ -1,4 +1,4 @@
-import { newRender } from '../newElement';
+import { pushComponentQueue } from '../newElement';
 import 'reflect-metadata';
 import { Reactive, definedReactive } from '../reactiveData';
 import VNode from '@/core/VNode';
@@ -141,13 +141,18 @@ export function Component(options: ComponentOptions) {
       _create() {
         const virtualElement: any = this.render() || null;
         console.log(this._virtualNode, virtualElement);
-        newRender(this._shadowRoot, this._virtualNode, virtualElement, () => {
-          console.log(this._virtualNode, 'v');
-          if (!this._virtualNode) {
-            this._virtualNode = virtualElement;
-            this._installed = true;
-          }
-        });
+        pushComponentQueue(
+          this._shadowRoot,
+          this._virtualNode,
+          virtualElement,
+          () => {
+            console.log(this._virtualNode, 'v');
+            if (!this._virtualNode) {
+              this._virtualNode = virtualElement;
+              this._installed = true;
+            }
+          },
+        );
       }
 
       _update() {
@@ -159,10 +164,15 @@ export function Component(options: ComponentOptions) {
         this._willUpdate = true;
         const virtualElement: any = this.render() || null;
         console.log(this._virtualNode, virtualElement);
-        newRender(this._shadowRoot, this._virtualNode, virtualElement, () => {
-          that._willUpdate = false;
-          console.log(that._willUpdate, '_willn');
-        });
+        pushComponentQueue(
+          this._shadowRoot,
+          this._virtualNode,
+          virtualElement,
+          () => {
+            that._willUpdate = false;
+            console.log(that._willUpdate, '_willUpdate');
+          },
+        );
         // this._virtualNode = virtualElement;
       }
 
