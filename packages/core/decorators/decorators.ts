@@ -9,24 +9,6 @@ export interface ComponentOptions extends ElementDefinitionOptions {
   style?: any;
 }
 
-export function makeProxy(origin: any) {
-  let value =
-    origin && origin instanceof Object
-      ? { ...origin, _type: 'reference' }
-      : { value: origin, _type: 'simple' };
-  return new Proxy(value, {
-    get(target: any, key: string) {
-      console.log(key, 'Proxy 获取了');
-      return target[key];
-    },
-    set(target: any, key: string, value: any) {
-      console.log(key, 'Proxy 设置了');
-      target[key] = value;
-      return true;
-    },
-  });
-}
-
 /**
  *
  * @param type
@@ -97,11 +79,8 @@ export function Component(options: ComponentOptions) {
 
         _propNames.forEach((item) => {
           let val = super.getAttribute(item);
-          // super.removeAttribute(item);
-
           let origin = val === undefined ? true : val || this[item];
-          this[item] = new Reactive(origin, this._create.bind(this));
-          // console.log(this[item], item, 'a');
+          this[item] = new Reactive(origin, () => this._update());
         });
       }
 
@@ -111,7 +90,6 @@ export function Component(options: ComponentOptions) {
           let css = _cssStyle.replace(/(\/\/.*$)|(\/\*(.|\s)*?\*\/)/g, '');
           const styleSheet = new CSSStyleSheet();
           styleSheet.replaceSync(css);
-          // console.log(styleSheet);
           _shadowRoot.adoptedStyleSheets = [styleSheet];
         }
       }
@@ -140,13 +118,11 @@ export function Component(options: ComponentOptions) {
 
       _create() {
         const virtualElement: any = this.render() || null;
-        console.log(this._virtualNode, virtualElement);
         pushComponentQueue(
           this._shadowRoot,
           this._virtualNode,
           virtualElement,
           () => {
-            console.log(this._virtualNode, 'v');
             if (!this._virtualNode) {
               this._virtualNode = virtualElement;
               this._installed = true;
@@ -157,20 +133,17 @@ export function Component(options: ComponentOptions) {
 
       _update() {
         const that = this;
-        console.log(this._willUpdate, '_willUpdate');
-        if (this._willUpdate) {
+        if (this._willUpdate || !this._installed) {
           return false;
         }
         this._willUpdate = true;
         const virtualElement: any = this.render() || null;
-        console.log(this._virtualNode, virtualElement);
         pushComponentQueue(
           this._shadowRoot,
           this._virtualNode,
           virtualElement,
           () => {
             that._willUpdate = false;
-            console.log(that._willUpdate, '_willUpdate');
           },
         );
         // this._virtualNode = virtualElement;
@@ -257,70 +230,5 @@ export function State() {
     const states = Reflect.getMetadata('states', target) || [];
     states.push(key);
     Reflect.defineMetadata('states', states, target);
-    // if (!target.constructor.__decorators__) {
-    //   target.constructor.__decorators__ = [];
-    // }
-    // target.constructor.__decorators__.push(key);
-    // console.log(target.state,'vvv vvv');
-    // Object.defineProperty(target, key, {
-    //   get() {
-    //     return target['state'][key];
-    //   },
-    //   set(val: any) {
-    //     // console.log('cc');
-    //     target['state'][key] = val;
-    //   },
-    // });
-    // console.log(target,'a');
-    // target.state[key] = "";
-    /** stateNames */
-    // const stateNames = Reflect.getMetadata('stateNames', target) || [];
-    // stateNames.push(key);
-    // Reflect.defineMetadata('stateNames', stateNames, target);
-    // let OriginValue = target[key];
-    // let value =
-    //   OriginValue instanceof Object
-    //     ? { ...OriginValue, _type: 'reference' }
-    //     : { value: OriginValue, _type: 'simple' };
-    // let proxyValue = new Proxy(value, {
-    //   get(target: any, key: string) {
-    //     console.log(key, 'Proxy 获取了');
-    //     return target[key];
-    //   },
-    //   set(target: any, key: string, value: any) {
-    //     console.log(key, 'Proxy 设置了');
-    //     target[key] = value;
-    //     return true;
-    //   },
-    // });
-    // // let value = makeProxy(OriginValue);
-    // // // target[key] = value;
-    // // console.log(value,target,key,'key');
-    // Object.defineProperty(target, key, {
-    //   get() {
-    //     // return value;
-    //     if (value) {
-    //       if (value._type === 'simple') {
-    //         return proxyValue.value;
-    //       } else {
-    //         return proxyValue;
-    //       }
-    //     } else {
-    //       return undefined;
-    //     }
-    //   },
-    //   set(val: any) {
-    //     console.log('aa', val, target.installed, OriginValue);
-    //     // value = makeProxy(val);
-    //     //  if (value) {
-    //     //    if (value._type === 'simple') {
-    //     //     proxyValue.value = val;
-    //     //    }
-    //     //   //  else {
-    //     //   //   proxyValue = val;
-    //     //   //  }
-    //     //  }
-    //   },
-    // });
   };
 }

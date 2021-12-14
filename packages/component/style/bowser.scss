@@ -3,7 +3,7 @@
 @import './normalize';
 @import './reset';
 
-$elements: $button, $icon, $badge, $link;
+$elements: $button, $icon, $badge, $link,$switch;
 
 @each $k in $elements {
   #{$k} {

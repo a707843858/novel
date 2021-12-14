@@ -4,8 +4,8 @@ $size-list: 'large', 'medium', 'small';
 $size-height-list: 40px, 32px, 28px;
 $size-font-list: 16px, 14px, 12px;
 $size-circle-list: 28px, 22px, 20px;
-$zise-top-list: 6px, 5px, 4px;
-$zise-left-list: 6px, 5px, 4px;
+$size-top-list: 6px, 5px, 4px;
+$size-left-list: 6px, 5px, 4px;
 $size-dot-list: 14px, 11px, 10px;
 $size-min-width-list: 80px, 60px, 50px;
 
@@ -16,50 +16,19 @@ $size-min-width-list: 80px, 60px, 50px;
   user-select: none;
   &.#{$switch} {
     padding: 0 6px 0 30px;
-
     &::before {
       width: nth($size-circle-list, $i);
       height: nth($size-circle-list, $i);
-      top: nth($zise-top-list, $i);
-      left: nth($zise-left-list, $i);
-      right: auto;
-      // box-shadow: ;
+      top: nth($size-top-list, $i);
     }
-    &::after {
+    &:after {
       width: nth($size-dot-list, $i);
       height: nth($size-dot-list, $i);
       top: calc(
-        #{nth($zise-top-list, $i)} + #{(
-            nth($size-circle-list, $i) - nth($size-dot-list, $i)
-          ) / 2}
-      ); //calc(50% - #{nth($size-dot-list, $i) / 2});
-      left: calc(
-        #{nth($zise-top-list, $i)} + #{(
+        #{nth($size-top-list, $i)} + #{(
             nth($size-circle-list, $i) - nth($size-dot-list, $i)
           ) / 2}
       );
-      background-color: #9baacf;
-    }
-    &:active {
-      &::before {
-        width: calc(100% - #{nth($zise-left-list, $i) * 2});
-      }
-      &::after {
-        opacity: 1;
-        width: 50%;
-      }
-    }
-
-    &.active {
-      padding: 0 30px 0 6px;
-      &::before {
-        left: auto;
-        right: nth($zise-left-list, $i);
-      }
-      &::after {
-        left: auto;
-        right: #{2px + (nth($size-circle-list, $i) - nth($size-dot-list, $i))/2};
-      }
     }
 
     .#{$switch}__input {
@@ -68,6 +37,50 @@ $size-min-width-list: 80px, 60px, 50px;
       height: 0;
       opacity: 0;
       margin: 0;
+    }
+
+    &:not(.is-checked) {
+      &::before {
+        left: nth($size-left-list, $i);
+        right: auto;
+      }
+      &::after {
+        left: calc(
+          #{nth($size-top-list, $i)} + #{(
+              nth($size-circle-list, $i) - nth($size-dot-list, $i)
+            ) / 2}
+        );
+        right: auto;
+      }
+    }
+    &.is-checked {
+      padding: 0 30px 0 6px;
+      background-color: $color-primary;
+      &::before {
+        left: auto;
+        right: nth($size-left-list, $i);
+      }
+      &::after {
+        left: auto;
+        right: calc(
+          #{nth($size-top-list, $i)} + #{(
+              nth($size-circle-list, $i) - nth($size-dot-list, $i)
+            ) / 2}
+        );
+        background-color: $color-primary;
+      }
+    }
+    &:not(.is-disabled) {
+      &:active {
+        &::before {
+          //width: calc(100% - #{nth($size-left-list, $i) * 2});
+          width: 50%;
+        }
+        &::after {
+          opacity: 1;
+          width: 30%;
+        }
+      }
     }
   }
 }
@@ -92,10 +105,13 @@ $size-min-width-list: 80px, 60px, 50px;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    background-color: #eee;
+    background-color: #fff;
     border-radius: inherit;
     position: relative;
-    transition: all $animation-duration-base linear;
+    background-color:#9baacf;
+    color: #fff;
+    transition: all $animation-duration-base
+      cubic-bezier(0.78, 0.14, 0.15, 0.86);
     .n-switch-inner {
       display: inline-flex;
       align-items: center;
@@ -107,9 +123,7 @@ $size-min-width-list: 80px, 60px, 50px;
       position: absolute;
       border-radius: inherit;
       background-color: #fff;
-      // box-shadow: 0 2px 4px 0 rgba(0, 38, 10, 0.2);
-      transition: all $animation-duration-base
-        cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transition: all $animation-duration-fast ease-in-out;
       z-index: 1;
     }
     &::after {
@@ -117,45 +131,12 @@ $size-min-width-list: 80px, 60px, 50px;
       position: absolute;
       z-index: 2;
       border-radius: inherit;
-      // box-shadow: 0 2px 4px 0 rgba(0, 38, 10, 0.2);
-      transition: all $animation-duration-base
-        cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      // background-color: $color-success;
-      // opacity: 0;
+      background-color: #9baacf;
+      transition: all $animation-duration-fast ease-in-out;
+        //cubic-bezier(0.78, 0.14, 0.15, 0.86);
     }
-    // &:active {
-    //   &::before {
-    //     width: calc(100% - 4px);
-    //   }
-    //   &::after {
-    //     opacity: 1;
-    //     width: 50%;
-    //   }
-    // }
 
-    //zoosemy
-    &.is-zoosemy {
-      background-color: #e4ebf5;
-      box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
-      &::before {
-        box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
-      }
-      &:active {
-        box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
-          inset -0.1em -0.1em 0.12em #fff;
-      }
-    }
-  }
-  &:host([disabled]) {
-    cursor: not-allowed;
-    .#{$switch}-wrapper {
-      &::after {
-        background-color: $color-info;
-      }
-    }
-  }
-
-  .#{$switch} {
+    //size
     @for $i from 1 to length($size-list) + 1 {
       @if (nth($size-list, $i) == medium) {
         @include size-context($i);
@@ -163,8 +144,57 @@ $size-min-width-list: 80px, 60px, 50px;
         &.is-#{nth($size-list, $i)} {
           @include size-context($i);
         }
-        // &:host([size='#{nth($size-list,$i)}']) {
-        // }
+      }
+    }
+
+    //zoosemy
+    &.is-zoosemy {
+      background-color: #e4ebf5;
+      box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
+      color: rgb(155, 170, 207);
+
+      /** Not Disabled */
+      &:not(.is-disabled) {
+        &:not(.is-checked) {
+          &::before {
+            box-shadow: -0.23em -0.23em 0.5em #ffffffb3,
+              0.35em 0.35em 0.7em $gray-2;
+          }
+          &:active,
+          &:hover {
+            box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
+              inset -0.1em -0.1em 0.12em #fff;
+          }
+        }
+        &.is-checked {
+          background-color: #e4ebf5;
+          box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
+            inset -0.1em -0.1em 0.12em #fff;
+          &::before {
+            box-shadow: -0.23em -0.23em 0.5em #ffffffb3,
+              0.35em 0.35em 0.7em $gray-2;
+          }
+        }
+      }
+
+      &.is-disabled {
+        color: rgba(29, 28, 26, 0.64);
+        background-color: #eaeaea;
+        box-shadow: -0.23em -0.23em 0.5em rgba(174, 174, 192, 0.4),
+          0.35em 0.35em 0.7em rgba(255, 255, 255, 25%);
+        &:before {
+          background-color: mix($color-white, #eaeaea, 55%);
+        }
+        &:after {
+          background-color: mix(#9baacf, #eaeaea, 55%);
+        }
+        &.is-checked {
+          box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
+            inset -0.1em -0.1em 0.12em #fff;
+          &:after {
+            background-color: mix($color-primary, #eaeaea, 35%);
+          }
+        }
       }
     }
   }

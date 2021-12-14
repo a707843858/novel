@@ -84,7 +84,6 @@ function transformPlugin(context) {
                 //     return current;
                 //   }
                 // });
-                console.log(currentNames.length, names.length, 'currentNames');
                 const elements = currentNames.map((current) => {
                   return ts.createVariableDeclaration(
                     current.name.escapedText,

@@ -41,8 +41,6 @@ export function pushComponentQueue(
 }
 
 const loopQueue = function (dealLine: any) {
-  console.log(VNodeQueue, 'VNodeQueue');
-
   while (dealLine.timeRemaining() > 0 && VNodeQueue?.length) {
     nextVNode();
   }
@@ -127,18 +125,15 @@ const nextVNode = function () {
         : findNode(newStartNode, list, oldStartIndex, oldEndIndex);
       //匹配成功
       if (idxInOld && isSameNode(idxInOld, newStartNode)) {
-        idxInOld.children = [];
-        idxInOld.element?.parentNode?.removeChild(<Node>idxInOld.element);
-        // idxInOld.element = createElement(idxInOld);
-        list.splice(oldStartIndex, 0, idxInOld);
-        insertBefore(parentEl, idxInOld.element, oldStartNode.elm);
+        // idxInOld.children = [];
+        // idxInOld.element?.parentNode?.removeChild(<Node>idxInOld.element);
+        // // idxInOld.element = createElement(idxInOld);
+        // list.splice(oldStartIndex, 0, idxInOld);
+        // insertBefore(parentEl, idxInOld.element, oldStartNode.elm);
+        patchVNode(parentEl, idxInOld, newStartNode, list, oldStartIndex);
       } else {
-        newStartNode.element = createElement(newStartNode);
-
-        list.splice(oldStartIndex, 0, newStartNode);
-        // console.log(parentEl,newStartNode.element, 'container');
-        insertBefore(parentEl, newStartNode.element, oldStartNode?.element);
-        patchChildren(newStartNode.element, undefined, newStartNode.children);
+        /** 新增 */
+        patchVNode(parentEl, undefined, newStartNode, list, oldStartIndex);
       }
       idxInOld = undefined;
       oldEndNode = list[++oldEndIndex];
@@ -149,61 +144,59 @@ const nextVNode = function () {
 
   if (oldStartIndex <= oldEndIndex) {
     for (let i = oldEndIndex; i >= oldStartIndex; i--) {
-      const item = list[i];
-      if (item) {
-        if (item.element) {
-          item.element.parentNode?.removeChild(<Node>item.element);
-        } else {
-          item.element = createElement(item);
-          parentEl.append(item.element || '');
-          patchChildren(item.element, item.children, []);
-        }
-        list.splice(i, 1);
-      }
+      patchVNode(parentEl, list[i], undefined, list, i);
+      // if (item) {
+      //   if (item.element) {
+      //     item.element.parentNode?.removeChild(<Node>item.element);
+      //   } else {
+      //     item.element = createElement(item);
+      //     parentEl.append(item.element || '');
+      //     patchChildren(item.element, item.children, []);
+      //   }
+      //   list.splice(i, 1);
+      // }
     }
   }
 
   VNodeQueue.shift();
 };
 
-const patchVNode = function (parentEL: HTMLElement, old?: VNode, newV?: VNode) {
-  //一致则无需修改
-  if (old === newV) {
+const patchVNode = function (
+  parentEl: HTMLElement,
+  old?: VNode,
+  newV?: VNode,
+  nodeList?: VNode[],
+  oldStartIndex: number = -1,
+  prevEl?: HTMLElement,
+) {
+  /** 一致则无需修改 */
+  if (old === newV || (old?.key && newV?.key && old.key === newV.key)) {
     return;
   }
 
-  //新增
-  // if (!old && newV) {
-  //   //新增
-  //   old = newV;
-  //   renderQueue.push({ container: parentEL, vNode: old });
-  // }
-
-  // if (old?.element && !newV) {
-  //   //移除
-  //   old.patch = 'remove';
-  //   renderQueue.push({ container: parentEL, vNode: old });
-  // }
-
-  // if (old?.key && newV?.key) {
-  //   return false;
-  // }
-
-  if (old) {
-    console.log(old.props);
-    updateProperties(old.element, newV?.props || {}, old.props || {});
-    old.props = newV?.props || undefined;
-    // renderQueue.push({ container: parentEL, vNode: old });
-  }
-  // if {
-  //   //创建新的 覆盖旧的
-  //   old = { ...old, type: newV?.type, props: newV?.props, path: 'replace' };
-  //   renderQueue.push({ container: parentEL, vNode: old });
-  // }
-
-  //子元素
-  if (old?.children || newV?.children) {
-    patchChildren(old?.element, old?.children, newV?.children);
+  /** 新增 */
+  if (!old && newV) {
+    newV.element = createElement(newV);
+    nodeList?.splice(oldStartIndex, 0, newV);
+    insertBefore(parentEl, newV.element, prevEl);
+    patchChildren(newV.element, undefined, newV.children);
+  } else if (old?.element && !newV) {
+    /** 移除 */
+    old.element.parentNode?.removeChild(old.element);
+    nodeList?.splice(oldStartIndex, 1);
+  } else if (old && newV) {
+    /**  替换旧的 */
+    if ((old.key && newV.key) || old?.type !== newV?.type) {
+      newV.element = createElement(newV);
+      old.element?.parentNode?.removeChild(old.element);
+      nodeList?.splice(oldStartIndex, 0, newV);
+      insertBefore(parentEl, newV.element, prevEl);
+      patchChildren(newV.element, undefined, newV?.children);
+    } else {
+      updateProperties(old.element, newV?.props || {}, old.props || {});
+      old.props = newV.props || undefined;
+      patchChildren(old.element, old.children, newV.children);
+    }
   }
 };
 
@@ -289,12 +282,6 @@ export const createVirtualElement = function (
       new VNode({ type: 'TEXT', props: { nodeValue: textString } }),
     );
   textString = '';
-  // children = children.map((child) => {
-  //   console.log(child,'=dd');
-  //   return typeof child === 'object'
-  //     ? new VNode(child)
-  //     : new VNode({ type: 'TEXT', props: { nodeValue: child } });
-  // });
   return new VNode({
     type,
     props: props,
@@ -341,7 +328,6 @@ export const updateProperties = function (
   if (!dom) {
     return;
   }
-  console.log(props, oldProps);
 
   const updateByKey = (currentKey: string, oldKey: string) => {
     let oldValue = oldProps[oldKey] || '',
@@ -394,39 +380,4 @@ export const updateProperties = function (
   oldKeys.forEach((key) => {
     updateByKey(key, key);
   });
-
-  // Object.keys(props).map((key) => {
-  //   if (typeof props[key] === 'function') {
-  //     let currentListener = props[key];
-  //     let oldListener = oldProps[key];
-  //     if (!oldListener && currentListener) {
-  //       dom.addEventListener(
-  //         key.slice(2).toLowerCase(),
-  //         currentListener,
-  //         false,
-  //       );
-  //     }
-  //     // else if(oldListener && !currentListener){
-  //     //   dom.removeEventListener(key.slice(2).toLowerCase(),oldListener,false);
-  //     // }else {
-  //     //   dom.removeEventListener(key.slice(2).toLowerCase(),oldListener,false);
-  //     //   dom.addEventListener(key.slice(2).toLowerCase(), currentListener , false);
-  //     // }
-  //   } else if (key === 'style') {
-  //     let style = '';
-  //     Object.keys(props.style).map((s) => {
-  //       style += `${camelCaseToHyphen(s)}:${props.style[s]};`;
-  //     });
-  //
-  //     dom.style = style;
-  //   } else if (key === 'nodeValue') {
-  //     console.log(props[key], props);
-  //     dom[key] = String(props[key]);
-  //   } else if (key !== 'children') {
-  //     // console.log(key, dom, props[key]);
-  //     // let name = key === 'className' ? 'class' : '';
-  //
-  //     dom[key] = props[key];
-  //   }
-  // });
 };

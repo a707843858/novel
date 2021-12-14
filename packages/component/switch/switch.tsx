@@ -1,4 +1,4 @@
-import { Component, CustomComponent, Prop, State } from '../../core';
+import { Component, Prop, State } from '../../core';
 import { tuple } from '../utils/types';
 import Style from './style/index.scss';
 import classnames from 'classnames';
@@ -13,16 +13,22 @@ export type SwitchSizeType = typeof SwitchSizeTypes[number];
 })
 export class Switch extends HTMLElement {
   @Prop() size: SwitchSizeType = '';
-  @Prop() value: string | boolean | number = 'l';
-  @Prop() checked: boolean = false;
+  @Prop() value: string | number | boolean | null = false;
   @Prop() disabled: boolean = false;
   @Prop() activeValue: string | number | boolean = true;
   @Prop() inactiveValue: string | number | boolean = false;
   @Prop() zoosemy: boolean = false;
+  @Prop() activeText: string | number = '';
+  @Prop() inactiveText: string | number = '';
   @State() active: boolean = false;
 
-  beforeCreated() {
-    this.active = this.checked;
+  beforeCreate() {
+    const { activeValue, value } = this;
+    if (value === activeValue) {
+      this.active = true;
+    } else {
+      this.active = false;
+    }
   }
 
   handleClick() {
@@ -34,17 +40,18 @@ export class Switch extends HTMLElement {
   }
 
   render() {
-    const { zoosemy, size, active } = this;
+    const { zoosemy, size, active, disabled, activeText, inactiveText } = this;
     const classNames = classnames('n-switch', (size && `is-${size}`) || '', {
-      'is-active': active,
+      'is-checked': active,
       'is-zoosemy': zoosemy,
+      'is-disabled': disabled,
     });
     return (
       <div className={classNames} onClick={() => this.handleClick()}>
-        <div className="n-switch-dot"></div>
-        <input type="checkbox" className="n-switch__input"></input>
+        <div className="n-switch-dot" />
+        <input type="checkbox" className="n-switch__input" />
         <span className="n-switch-inner">
-          {active ? '开' : '关'} {this.value} {active}
+          {active ? activeText : inactiveText}
         </span>
       </div>
     );
