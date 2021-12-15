@@ -2,9 +2,9 @@
 
 $hover-opacity: 0.65;
 $label-plain-opacity: 0.3;
-$border-raduis: 2px;
+$border-radius: 2px;
 $theme-list: (
-  'info': (
+  'normal': (
     #e4ebf5 /** main */,
     #9baacf /** font-color*/,
     $color-primary /** font-color-hover */,
@@ -53,15 +53,28 @@ $theme-list: (
   //   rgba($color-danger-lighter,0.5),
   //   $color-primary-dark /** bg-zoosemy-left-top */,
   //   $color-primary-lighter /** bg-zoosemy-right-bottom */,
-  // ),,
+  // ),,,,,
 );
-$type-list: 'normal', 'plain', 'dashed', 'link';
+$type-list: 'normal', 'zoosemy';
 // $size-list: 'huge', 'big', 'large', 'medium', 'small', 'mini';
 // $size-height-list: 52px, 46px, 40px, 34px, 28px, 24px;
-$size-list: 'large', 'medium', 'small';
-$size-height-list: 40px, 32px, 28px;
-$size-font-list: 16px, 14px, 12px;
-$size-padding-list: 16px, 10px, 8px;
+$size-list: (
+  'large': (
+    40px /** Height */,
+    16px /** Font-Size */,
+    16px /** Padding */,
+  ),
+  'medium': (
+    32px,
+    14px,
+    10px,
+  ),
+  'small': (
+    28px,
+    12px,
+    8px,
+  ),
+);
 
 @mixin plain-disabled {
   color: rgba(0, 0, 0, 0.3);
@@ -82,65 +95,51 @@ $size-padding-list: 16px, 10px, 8px;
   cursor: not-allowed;
 }
 
-@mixin normal-theme($key, $color) {
+@mixin normal-theme($key, $color, $type) {
   &:enabled {
     color: nth($color, 2);
-    background-color: if($key == info, #fff, nth($color, 1));
+    background-color: if($key == 'normal', #fff, nth($color, 1));
     border: none;
     &:hover {
       color: nth($color, 3);
-      background-color: nth($color, 4);
+      background-color: if($key == 'normal', #fff, nth($color, 4));
     }
 
-    &.#{$button}__zoosemy {
-      background-color: nth($color, 1);
-      box-shadow: -0.23em -0.23em 0.5em nth($color, 5),
-        0.35em 0.35em 0.7em nth($color, 6);
-      // box-shadow: 5px 5px 8px $gray-2, -5px -5px 8px $color-white;
-      &:hover,
-      &:focus {
-        color: nth($color, 2);
-        background-color: nth($color, 1);
-      }
-      &:active {
-        box-shadow: inset 0.23em 0.23em 0.58em nth($color, 7),
-          inset -0.23em -0.23em 0.58em nth($color, 8);
-      }
-    }
+    //&.#{$button}__zoosemy {
+    //  background-color: nth($color, 1);
+    //  box-shadow: -0.23em -0.23em 0.5em nth($color, 5),
+    //    0.35em 0.35em 0.7em nth($color, 6);
+    //  // box-shadow: 5px 5px 8px $gray-2, -5px -5px 8px $color-white;
+    //  &:hover,
+    //  &:focus {
+    //    color: nth($color, 2);
+    //    background-color: nth($color, 1);
+    //  }
+    //  &:active {
+    //    box-shadow: inset 0.23em 0.23em 0.58em nth($color, 7),
+    //      inset -0.23em -0.23em 0.58em nth($color, 8);
+    //  }
+    //}
   }
 
-  @include theme-content-disabled();
-  // &:disabled {
-  //   color: rgba(0, 0, 0, 0.3);
-  //   cursor: not-allowed;
-  //   background-color: $color-disabled;
-  //   // box-shadow: 0 0 2px $color-disabled;
-  //   border-color: transparent;
-  // }
-  // &:active {
-  //   box-shadow: inset 0.2rem 0.2rem 0.5rem #c8d0e7,
-  //     inset -0.2rem -0.2rem 0.5rem #fff;
-  // }
-  // &.#{$button}__disabled {
-  //   color: rgba(0, 0, 0, 0.3);
-  //   cursor: not-allowed;
-  //   background-color: $color-disabled;
-  //   // box-shadow: 0 0 2px $color-disabled;
-  //   border-color: transparent;
-  // }
-  // &.#{$button}__normal {
-  // }
+  &:disabled {
+    color: rgba(0, 0, 0, 0.3);
+    cursor: not-allowed;
+    background-color: $color-disabled;
+    // box-shadow: 0 0 2px $color-disabled;
+    border-color: transparent;
+  }
 }
 
 @mixin plain-theme($key, $color) {
   &.#{$button}__plain {
     color: nth($color, 4);
     // box-shadow: 0 0 2px 0 rgba($color, $hover-opacity);
-    // border: 1px solid if($key == info , ,nth($color,1) ) ;
+    // border: 1px solid if($key == normal , ,nth($color,1) ) ;
     background-color: #fff;
     &:not(.#{$button}__disabled) {
       &:hover {
-        color: if($key == info, $color-primary, nth($color, 4));
+        color: if($key == normal, $color-primary, nth($color, 4));
       }
       // &:hover,
       // &:focus,
@@ -206,37 +205,67 @@ $size-padding-list: 16px, 10px, 8px;
   }
 }
 
-@mixin size-content($i) {
-  height: nth($size-height-list, $i);
-  min-width: nth($size-height-list, $i);
-  font-size: nth($size-font-list, $i);
-  padding: 0 nth($size-padding-list, $i);
+@mixin size-content($size) {
+  height: nth($size, 1);
+  min-width: nth($size, 1);
+  font-size: nth($size, 2);
+  padding: 0 nth($size, 3);
   #{$icon} + .#{$button}_wrapper {
-    padding: 0 nth($size-padding-list, $i) / 2;
+    padding: 0 nth($size, 3) / 2;
   }
 }
 
-@mixin theme-content($key, $color) {
-  @include normal-theme($key, $color);
+/** add theme by type */
+@mixin theme-content($type) {
+  @each $theme-key, $theme in $theme-list {
+    @if ($theme-key == 'normal') {
+      @include normal-theme($theme-key, $theme, $type);
+    } @else {
+      &.is-#{$theme-key} {
+        @include normal-theme($theme-key, $theme, $type);
+      }
+    }
+  }
+
   // @include dashed-theme($key, $color);
   // @include plain-theme($key, $color);
   // @include link-theme($key, $color);
 }
 
-@mixin theme-content-disabled() {
+@mixin zoosemy-content() {
+  background-color: #e4ebf5;
+  box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
+  &:enabled {
+    &:hover,
+    &:focus {
+      color: $color-primary;
+      background-color: #e4ebf5;
+    }
+    &:active {
+      box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
+        inset -0.1em -0.1em 0.12em #fff;
+    }
+  }
+
   &:disabled {
-    color: rgba(0, 0, 0, 0.3);
     cursor: not-allowed;
-    background-color: $color-disabled;
-    // box-shadow: 0 0 2px $color-disabled;
-    border-color: transparent;
+    color: rgba(29, 28, 26, 0.64);
+    background-color: #eaeaea;
+    box-shadow: -0.23em -0.23em 0.5em rgba(255, 255, 255, 25%),
+      0.35em 0.35em 0.7em rgba(174, 174, 192, 0.4);
+    &:before {
+      background-color: mix($color-white, #eaeaea, 55%);
+    }
+    &:after {
+      background-color: mix(#9baacf, #eaeaea, 55%);
+    }
   }
 }
 
 :host {
   display: inline-block;
   // margin: 0 10px 10px 0;
-  & > button {
+  & > .#{$button} {
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -249,15 +278,16 @@ $size-padding-list: 16px, 10px, 8px;
     padding: 0;
     line-height: 1;
     text-align: center;
-    border-radius: $border-raduis;
+    border-radius: $border-radius;
     background-color: transparent;
     cursor: pointer;
     -webkit-appearance: none;
     border: none;
-    //拟物风
     border-radius: 3px;
     justify-self: center;
-    transition: 0.3s ease;
+    transition: $animation-duration-base ease
+        cubic-bezier(0.78, 0.14, 0.15, 0.86),
+      box-shadow $animation-duration-base ease-in-out;
     // background-color: #fff;
     &:focus {
       outline: 0;
@@ -273,28 +303,33 @@ $size-padding-list: 16px, 10px, 8px;
       }
     }
 
-    //size
-    @for $i from 1 to length($size-list) + 1 {
-      $size: nth($size-list, $i);
-      @if ($size == 'medium') {
-        @include size-content($i);
+    /** Size */
+    @each $size-key, $size in $size-list {
+      @if ($size-key == 'medium') {
+        @include size-content($size);
       } @else {
-        &.#{$button}__#{$size} {
-          @include size-content($i);
+        &.is-#{$size-key} {
+          @include size-content($size);
         }
       }
     }
 
-    //theme && type
-    @each $theme-key, $color in $theme-list {
-      //info
-      @if $theme-key == 'info' {
-        @include theme-content($theme-key, $color);
-        @include theme-content-disabled();
+    /** Type */
+    @each $type in $type-list {
+      /** Normal type */
+      @if ($type != 'zoosemy') {
+        @if ($type == 'normal') {
+          @include theme-content($type);
+        } @else {
+          &:not(.is-zoosemy).is-#{$type} {
+            @include theme-content($type);
+          }
+        }
       } @else {
-        //other
-        &.#{$button}__#{$theme-key} {
-          @include theme-content($theme-key, $color);
+        /** Zoosemy type */
+        /** Exclude type : primary  */
+        &:not(.is-primary).is-#{$type} {
+          @include zoosemy-content();
         }
       }
     }
@@ -308,9 +343,5 @@ $size-padding-list: 16px, 10px, 8px;
     &.is-round {
       border-radius: 40px;
     }
-  }
-
-  &:host([disabled]) {
-    cursor: not-allowed;
   }
 }

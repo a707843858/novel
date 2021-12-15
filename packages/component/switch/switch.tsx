@@ -1,10 +1,12 @@
-import { Component, Prop, State } from '../../core';
+import { Component, Prop, State } from '@/core';
 import { tuple } from '../utils/types';
 import Style from './style/index.scss';
 import classnames from 'classnames';
 
 const SwitchSizeTypes = tuple('large', 'small');
 export type SwitchSizeType = typeof SwitchSizeTypes[number];
+const SwitchTypes = tuple('zoosemy');
+export type SwitchType = typeof SwitchTypes[number];
 
 @Component({
   name: 'n-switch',
@@ -17,18 +19,14 @@ export class Switch extends HTMLElement {
   @Prop() disabled: boolean = false;
   @Prop() activeValue: string | number | boolean = true;
   @Prop() inactiveValue: string | number | boolean = false;
-  @Prop() zoosemy: boolean = false;
+  @Prop() type: SwitchType = '';
   @Prop() activeText: string | number = '';
   @Prop() inactiveText: string | number = '';
   @State() active: boolean = false;
 
   beforeCreate() {
     const { activeValue, value } = this;
-    if (value === activeValue) {
-      this.active = true;
-    } else {
-      this.active = false;
-    }
+    this.active = value === activeValue;
   }
 
   handleClick() {
@@ -40,12 +38,16 @@ export class Switch extends HTMLElement {
   }
 
   render() {
-    const { zoosemy, size, active, disabled, activeText, inactiveText } = this;
-    const classNames = classnames('n-switch', (size && `is-${size}`) || '', {
-      'is-checked': active,
-      'is-zoosemy': zoosemy,
-      'is-disabled': disabled,
-    });
+    const { type, size, active, disabled, activeText, inactiveText } = this;
+    const classNames = classnames(
+      'n-switch',
+      (size && `is-${size}`) || '',
+      type && `is-${type}`,
+      {
+        'is-checked': active,
+        'is-disabled': disabled,
+      },
+    );
     return (
       <div className={classNames} onClick={() => this.handleClick()}>
         <div className="n-switch-dot" />

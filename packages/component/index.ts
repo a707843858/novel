@@ -9,7 +9,7 @@ import { Switch } from './switch';
 export interface useProps {
   components?: { [k: string]: any };
 }
-const components: { [k: string]: any } = { Switch }; //,  Link,Badge,Icon,Button
+const components: { [k: string]: any } = { Switch, Button, Icon, Badge }; //,  Link
 
 export const version = '1.0';
 

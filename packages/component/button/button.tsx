@@ -1,10 +1,9 @@
 import Style from './style/index.scss';
 import classnames from 'classnames';
-// import { Icon } from '../icon';
-import { defindComponent } from '../utils/utils';
 import { tuple } from '../utils/types';
-import { Component, Prop, CustomComponent } from '../../core';
+import { Component, Prop } from '@/core';
 
+const ButtonSizeTypes = tuple('large', 'small');
 const ButtonThemeTypes = tuple(
   'info',
   'primary',
@@ -12,40 +11,48 @@ const ButtonThemeTypes = tuple(
   'warning',
   'danger',
 );
-const ButtonTypes = tuple('normal', 'link', 'plain', 'dashed');
-const ButtonSizeTypes = tuple('large', 'small');
-export type ButtonHTMLType = 'submit' | 'button' | 'reset';
+const ButtonTypes = tuple('normal', 'link', 'plain', 'dashed', 'zoosemy');
+
 export type ButtonThemeType = typeof ButtonThemeTypes[number];
 export type ButtonType = typeof ButtonTypes[number];
 export type ButtonSizeType = typeof ButtonSizeTypes[number];
+export type ButtonNativeType = 'button' | 'submit' | 'reset' | undefined;
 
 @Component({
   name: 'n-button',
   mode: 'closed',
   style: Style.toString(),
 })
-export class Button extends CustomComponent {
+export class Button extends HTMLElement {
   @Prop() size: ButtonSizeType = '';
-  @Prop() color: String = '#E4EBF5';
-  // @Prop() type: string = '';
   @Prop() disabled: boolean = false;
   @Prop() loading: boolean = false;
   @Prop() icon: string = '';
-  @Prop() zoosemy: boolean = false;
   @Prop() theme: ButtonThemeType = '';
   @Prop() circle: boolean = false;
   @Prop() round: boolean = false;
+  @Prop() type: ButtonType = '';
+  @Prop() nativeType: ButtonNativeType;
 
   render() {
-    const { disabled, icon, loading, size, theme, zoosemy, circle, round } =
-      this;
+    const {
+      disabled,
+      icon,
+      loading,
+      size,
+      theme,
+      circle,
+      round,
+      nativeType,
+      type,
+    } = this;
     const classNames = classnames(
       'n-button',
-      (size && `n-button__${size}`) || '',
-      (theme && `n-button__${theme}`) || '',
-      (zoosemy && `n-button__zoosemy`) || '',
+      size && `is-${size}`,
+      type && `is-${type}`,
+      theme && type !== 'zoosemy' && `is-${theme}`,
       {
-        'n-button__disabled': disabled,
+        'is-disabled': disabled,
         'is-circle': circle,
         'is-round': round,
       },
@@ -75,7 +82,7 @@ export class Button extends CustomComponent {
       return '';
     };
     return (
-      <button disabled={disabled} className={classNames} data-bb="cc">
+      <button disabled={disabled} className={classNames} type={nativeType}>
         {NodeIcon()}
         {NodeButtonWrap()}
       </button>

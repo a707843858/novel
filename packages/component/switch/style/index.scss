@@ -71,6 +71,12 @@ $size-min-width-list: 80px, 60px, 50px;
       }
     }
     &:not(.is-disabled) {
+      &:hover,
+      &:focus {
+        &::after {
+          background-color: $color-primary;
+        }
+      }
       &:active {
         &::before {
           //width: calc(100% - #{nth($size-left-list, $i) * 2});
@@ -105,10 +111,9 @@ $size-min-width-list: 80px, 60px, 50px;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    background-color: #fff;
     border-radius: inherit;
     position: relative;
-    background-color:#9baacf;
+    background-color: #9baacf;
     color: #fff;
     transition: all $animation-duration-base
       cubic-bezier(0.78, 0.14, 0.15, 0.86);
@@ -133,7 +138,6 @@ $size-min-width-list: 80px, 60px, 50px;
       border-radius: inherit;
       background-color: #9baacf;
       transition: all $animation-duration-fast ease-in-out;
-        //cubic-bezier(0.78, 0.14, 0.15, 0.86);
     }
 
     //size
@@ -161,9 +165,13 @@ $size-min-width-list: 80px, 60px, 50px;
               0.35em 0.35em 0.7em $gray-2;
           }
           &:active,
-          &:hover {
-            box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
-              inset -0.1em -0.1em 0.12em #fff;
+          &:hover,
+          &:focus {
+            &::after {
+              background-color: $color-primary;
+            }
+            //box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
+            //  inset -0.1em -0.1em 0.12em #fff;
           }
         }
         &.is-checked {
@@ -180,8 +188,8 @@ $size-min-width-list: 80px, 60px, 50px;
       &.is-disabled {
         color: rgba(29, 28, 26, 0.64);
         background-color: #eaeaea;
-        box-shadow: -0.23em -0.23em 0.5em rgba(174, 174, 192, 0.4),
-          0.35em 0.35em 0.7em rgba(255, 255, 255, 25%);
+        box-shadow: -0.23em -0.23em 0.5em rgba(255, 255, 255, 25%),
+          0.35em 0.35em 0.7em rgba(174, 174, 192, 0.4);
         &:before {
           background-color: mix($color-white, #eaeaea, 55%);
         }

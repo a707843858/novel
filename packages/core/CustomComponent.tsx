@@ -1,17 +1,4 @@
-// import {
-//   VNodeTag,
-//   VNodeAttributes,
-//   VNodeKey,
-//   VNodeChildren,
-//   VNodeElement,
-//   render,
-//   Fiber,
-//   IncrementalRender,
-//   // newRender,
-// } from './element';
 import VNode from './VNode';
-import { newRender } from './newElement';
-import { readonly } from './decorators/utils';
 import { Watch } from './decorators/decorators';
 import 'reflect-metadata';
 // import { reactiveData } from './reactiveData';
