@@ -1,9 +1,28 @@
 @import '../../style/index.scss';
 
-//  #ffffffb3 /** bg-zoosemy-right-top */,
-//     $gray-2 /** bg-zoosemy-left-bottom */,
+$theme-list: (
+  'danger': (
+    $color-danger,
+  ),
+  'primary': (
+    $color-primary,
+  ),
+  'success': (
+    $color-success,
+  ),
+  'warning':(
+    $color-warning
+  ),
+  'info':(
+    $color-info
+  )
+);
 
-// rgb(255 255 255 / 70%) -0.1em -0.1em 0.2em inset, rgb(200 208 231) 0.1em 0.1em 0.2em inset
+@mixin  theme-content($theme){
+  .#{$badge}_content,.#{$badge}_dot_content {
+    background-color: nth($theme,1);
+  }
+}
 
 :host {
   display: inline-block;
@@ -16,8 +35,8 @@
       top: 0;
       right: 10px;
       transform: translateY(-50%) translateX(100%);
-      background-color:#e4ebf5; //$color-danger;
-      border-radius: 10px;
+      background-color: #e4ebf5;
+      border-radius: 8px;
       color: #fff;
       display: inline-block;
       font-size: 12px;
@@ -29,14 +48,8 @@
       // border: 1px solid #fff;
       z-index: 1;
     }
-    &.is-zoosemy {
-      .#{$badge}_content {
-        box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
-      }
-    }
-  }
-  //dot
-  &:host([dot]) {
+
+    /** dot */
     .#{$badge}_dot_content {
       position: absolute;
       background-color: $color-danger;
@@ -48,9 +61,31 @@
       right: -5px;
       z-index: 1;
     }
-  }
-  //Button
-  #{$button} {
-    margin: auto;
+
+    /** Theme */
+    @each $theme-key,$theme in $theme-list {
+      @if($theme-key == 'danger'){
+        @include  theme-content($theme);
+      }
+      @else {
+        &.is-#{$theme-key} {
+          @include  theme-content($theme);
+        }
+      }
+    }
+
+    /** Type */
+    &.is-zoosemy {
+      .#{$badge}_content {
+        z-index: 0;
+        background-color: #e4ebf5;
+        box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
+      }
+      .#{$badge}_dot_content {
+        z-index: 0;
+        background-color: #e4ebf5;
+        box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
+      }
+    }
   }
 }
