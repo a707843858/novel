@@ -3,11 +3,8 @@ import { defineConfig } from 'dumi';
 export default defineConfig({
   title: 'Novel',
   mode: 'site',
-  description:"xxxx",
-  locales: [
-    ['zh-CN', '中文'],
-    ['en-US', 'English'],
-  ],
+  description: '介绍',
+  locales: [['zh-CN', '中文']],
   navs: {
     'zh-CN': [
       {
@@ -21,7 +18,10 @@ export default defineConfig({
     ],
   },
   publicPath: '/public/',
-  scripts: [{ src: '/js/novel.js', type: 'module' }],
-  styles: [`.__dumi-default-code-block { margin-top:10px;}`],
+  scripts: [{ src: '/novel.js', type: 'module' }],
+  styles: [
+    `.__dumi-default-code-block { margin-top:10px;} `,
+    `body { color:#e4ebf5 }`,
+  ],
   // more config: https://d.umijs.org/config
 });
