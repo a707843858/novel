@@ -6,9 +6,10 @@ const webpack = require('webpack');
 const createTransformer = require('./babel/novelPlugin.js');
 
 module.exports = {
+  devtool: 'source-map',
   entry: path.join(__dirname, 'packages/index.ts'),
   output: {
-    path: path.join(__dirname, './public/static'),
+    path: path.join(__dirname, './public'),
     filename: 'novel.js',
   },
   resolve: {

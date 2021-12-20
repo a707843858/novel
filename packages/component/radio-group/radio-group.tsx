@@ -17,12 +17,14 @@ const RadioTypes = tuple('zoosemy');
 export type RadioType = typeof RadioTypes[number];
 
 @Component({
-  name: 'n-radio-group',
+  name: 'aa',
   mode: 'closed',
   style: Style.toString(),
 })
 export default class RadioGroup extends HTMLElement {
-  @Prop() defaultValue: any;
+  //@ts-ignore
+  readonly isRadioGroup: boolean = true;
+  @Prop() defaultValue: any = '';
   @Prop() disabled?: boolean;
   @Prop() name?: string;
   @Prop() options?: RadioGroupOptions;
@@ -30,12 +32,27 @@ export default class RadioGroup extends HTMLElement {
   @Prop() type?: RadioType;
   @State() value: any;
 
+  beforeCreate() {
+    this.setAttribute('role', 'radiogroup');
+    this.value = this.defaultValue;
+    console.log(this.slot);
+  }
+
   render() {
-    const { disabled } = this;
+    const { disabled, size, type } = this;
     return (
-      <div className={classNames('n-radio-group', { 'is-disabled': disabled })}>
+      <div
+        className={classNames(
+          'n-radio-group',
+          size && `is-${size}`,
+          type && `is-${type}`,
+          { 'is-disabled': disabled },
+        )}
+      >
         <slot> </slot>
       </div>
     );
   }
 }
+
+export { RadioGroup };
