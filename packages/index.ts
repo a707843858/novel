@@ -1,4 +1,2 @@
-import { use } from './component';
+import { use, version } from './component';
 use();
-
-export default use;

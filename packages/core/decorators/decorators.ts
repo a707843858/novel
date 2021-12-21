@@ -1,6 +1,6 @@
 import { pushComponentQueue } from '../newElement';
 import 'reflect-metadata';
-import { Reactive, definedReactive } from '../reactiveData';
+import { Reactive } from '../reactiveData';
 import VNode from '@/core/VNode';
 
 export interface ComponentOptions extends ElementDefinitionOptions {
@@ -79,8 +79,9 @@ export function Component(options: ComponentOptions) {
 
         _propNames.forEach((item) => {
           let val = super.getAttribute(item);
-          let origin = val === undefined ? true : val || this[item];
+          let origin = [undefined, ''].includes(val) ? true : val || this[item];
           this[item] = new Reactive(origin, () => this._update());
+          // console.log(this[item], item, 'item');
         });
       }
 
@@ -92,6 +93,10 @@ export function Component(options: ComponentOptions) {
           styleSheet.replaceSync(css);
           _shadowRoot.adoptedStyleSheets = [styleSheet];
         }
+      }
+
+      disconnectedCallback() {
+        console.log('移除了');
       }
 
       _createState() {
@@ -151,9 +156,14 @@ export function Component(options: ComponentOptions) {
 
       setAttribute(key: string, value: any) {
         const propNames: string[] =
-          Reflect.getMetadata('propNames', this) || [];
+            Reflect.getMetadata('propNames', this) || [],
+          { _installed } = this;
         if (propNames.includes(key)) {
-          this[key]['value'] = value;
+          if (_installed) {
+            this[key]['value'] = value;
+          } else {
+            this[key] = value;
+          }
         } else {
           super.setAttribute(key, value);
         }

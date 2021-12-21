@@ -190,16 +190,19 @@ $size-min-width-list: 80px, 60px, 50px;
         background-color: #eaeaea;
         box-shadow: -0.23em -0.23em 0.5em rgba(255, 255, 255, 25%),
           0.35em 0.35em 0.7em rgba(174, 174, 192, 0.4);
-        &:before {
+        &::before {
           background-color: mix($color-white, #eaeaea, 55%);
         }
-        &:after {
+
+        &::after {
           background-color: mix(#9baacf, #eaeaea, 55%);
         }
+
         &.is-checked {
           box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
-            inset -0.1em -0.1em 0.12em #fff;
-          &:after {
+          inset -0.1em -0.1em 0.12em #fff;
+
+          &::after {
             background-color: mix($color-primary, #eaeaea, 35%);
           }
         }

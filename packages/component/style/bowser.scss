@@ -3,13 +3,13 @@
 @import './normalize';
 @import './reset';
 
-$elements: $button, $icon, $badge, $link,$switch;
+$elements: $button, $icon, $badge, $link, $switch, $radio;
 
 @each $k in $elements {
   #{$k} {
     @each $t in $elements {
-      &+#{$t} {
-          margin-left: 10px;
+      & + #{$t} {
+        margin-left: 10px;
       }
     }
   }

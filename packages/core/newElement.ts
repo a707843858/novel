@@ -15,10 +15,9 @@ interface ComponentQueueItem {
   status: 'pending' | 'calculating';
 }
 
-let VNodeQueue: VNodeQueueItemType[] | null = null;
+let VNodeQueue: VNodeQueueItemType[] = [];
 let componentQueue: ComponentQueueItem[] = [];
 let currentComponent: ComponentQueueItem | undefined;
-let processStart: boolean = false;
 
 export function pushComponentQueue(
   container: any,
@@ -34,29 +33,27 @@ export function pushComponentQueue(
     status: 'pending',
   });
 
-  if (!processStart) {
-    requestIdleCallback(loopQueue);
-    processStart = true;
-  }
+  requestIdleCallback(loopQueue);
 }
 
 const loopQueue = function (dealLine: any) {
-  while (dealLine.timeRemaining() > 0 && VNodeQueue?.length) {
+  // console.log(componentQueue);
+  while (dealLine.timeRemaining() > 0 && VNodeQueue.length) {
     nextVNode();
   }
 
   /** 是否有该完结任务 */
-  if (VNodeQueue && !VNodeQueue.length) {
+  if (!VNodeQueue.length) {
     if (currentComponent) {
       currentComponent.callback && currentComponent.callback(true);
       currentComponent = undefined;
-      VNodeQueue = null;
+      // VNodeQueue = null;
     }
+    // requestIdleCallback(loopQueue);
   }
 
   /** 继续推进组件任务队列 */
-  if (componentQueue.length) {
-    VNodeQueue = VNodeQueue || [];
+  if (componentQueue.length && !currentComponent) {
     VNodeQueue.push({
       parentEl: componentQueue[0].container,
       old: componentQueue[0].VirtualDom ? [componentQueue[0].VirtualDom] : [],
@@ -66,10 +63,11 @@ const loopQueue = function (dealLine: any) {
     });
     currentComponent = componentQueue[0];
     componentQueue.shift();
-    requestIdleCallback(loopQueue);
+    // requestIdleCallback(loopQueue);
   } else {
-    requestIdleCallback(loopQueue);
+    // requestIdleCallback(loopQueue);
   }
+  requestIdleCallback(loopQueue);
 };
 
 const nextVNode = function () {
@@ -264,7 +262,22 @@ export const createVirtualElement = function (
 ) {
   let textString = '';
   const vChildren: VNode[] = [];
-  children.map((child) => {
+
+  for (let i = 0; i < children.length; i++) {
+    let child = children[i];
+
+    /** 处理 <></>*/
+    // while (child && !child.type) {
+    //   children.splice(i, 1, ...(child.children || []));
+    //   child = children[i];
+    // }
+
+    /** 处理数组类型 */
+    while (Array.isArray(child)) {
+      children.splice(i, 1, ...child);
+      child = children[i];
+    }
+
     if (typeof child === 'object') {
       if (textString) {
         vChildren.push(
@@ -276,12 +289,25 @@ export const createVirtualElement = function (
     } else {
       textString += ` ${child}`;
     }
-  });
+  }
+  // children.map((child) => {
+  //   let virtualChild = child;
+  //   if (typeof virtualChild === 'object') {
+  //     if (textString) {
+  //       vChildren.push(
+  //         new VNode({ type: 'TEXT', props: { nodeValue: textString } }),
+  //       );
+  //       textString = '';
+  //     }
+  //     vChildren.push(virtualChild);
+  //   } else {
+  //     textString += ` ${virtualChild}`;
+  //   }
+  // });
   textString &&
     vChildren.push(
       new VNode({ type: 'TEXT', props: { nodeValue: textString } }),
     );
-  textString = '';
   return new VNode({
     type,
     props: props,
@@ -310,7 +336,8 @@ export const createElement = function (vnode: VNode) {
   if (vnode.type === 'TEXT' && vnode.props?.nodeValue) {
     el = document.createTextNode(JSON.stringify(vnode.props.nodeValue) || '');
   } else {
-    el = document.createElement(vnode.type);
+    let typeName = typeof vnode.type === 'function' ? vnode.type() : vnode.type;
+    el = document.createElement(typeName);
   }
 
   if (vnode.props) {
@@ -381,3 +408,10 @@ export const updateProperties = function (
     updateByKey(key, key);
   });
 };
+
+export function Fragment(type: any, props: any, children: any) {
+  // console.log('kk');
+  console.log(type, props, children, 'k');
+
+  return 'template';
+}

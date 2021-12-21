@@ -9,7 +9,7 @@ export type VNodePath =
   | 'insert';
 
 export default class VNode {
-  type: string = '';
+  type: string | Function = '';
   props?: { [k: string]: any };
   key?: VNodeKey;
   element?: VNodeElement;

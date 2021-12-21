@@ -123,6 +123,10 @@ module.exports = {
         path.resolve(__dirname, 'packages/core/index.ts'),
         'createVirtualElement',
       ],
+      'Novel.Fragment': [
+        path.resolve(__dirname, 'packages/core/index.ts'),
+        'Fragment',
+      ],
     }),
   ],
 };

@@ -1,7 +1,13 @@
 {
   "presets": [
     "@babel/preset-env",
-    ["@babel/preset-react", { "pragma": "Novel.createVirtualElement" }]
+    [
+      "@babel/preset-react",
+      {
+        "pragma": "Novel.createVirtualElement",
+        "pragmaFrag": "Novel.Fragment"
+      }
+    ]
   ],
   "plugins": [["@babel/plugin-transform-runtime", { "regenerator": true } ]]
 }
