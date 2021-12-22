@@ -1,7 +1,7 @@
 const ts = require('typescript');
 
 function transformPlugin(context) {
-  const extendsClass = 'HTMLElement';
+  const extendsClass = ['NovelElement'];
   const PropNames = ['Prop', 'State'];
   function visit(node) {
     //判断是否为类
@@ -17,7 +17,7 @@ function transformPlugin(context) {
           //判断是否有继承自HTMLElement
           return (
             t.kind === ts.SyntaxKind.ExpressionWithTypeArguments &&
-            t.expression?.escapedText === extendsClass
+            extendsClass.includes(t.expression?.escapedText)
           );
         });
 

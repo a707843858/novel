@@ -1,3 +1,5 @@
+import component from '@/component';
+
 export type VNodeElement = HTMLElement | Text | null | undefined;
 export type VNodeKey = string | number | null;
 export type VNodePath =
@@ -8,13 +10,12 @@ export type VNodePath =
   | 'update'
   | 'insert';
 
-export default class VNode {
+export class VNode {
   type: string | Function = '';
   props?: { [k: string]: any };
   key?: VNodeKey;
   element?: VNodeElement;
   children?: VNode[];
-  patch?: VNodePath;
   [k: string]: any;
 
   constructor(props: { [k: string]: any } = {}) {
@@ -45,3 +46,5 @@ export default class VNode {
   //   }
   // }
 }
+
+export default VNode;

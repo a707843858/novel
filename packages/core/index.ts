@@ -3,7 +3,7 @@ import { CustomComponent } from './CustomComponent';
 // import { createElement, createVirtualElement } from './element';
 import NovelElement from '@/core/novelElement';
 import { createVirtualElement, Fragment } from './newElement';
-import { Prop, Component, State } from './decorators/decorators';
+import { Prop, Component, State } from './decorators';
 
 export {
   define,

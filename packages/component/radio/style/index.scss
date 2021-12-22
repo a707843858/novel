@@ -1,0 +1,159 @@
+@import '../../style/index.scss';
+$size-list: (
+  'large': (
+    40px /** Height */,
+    16px /** Font size */,
+    28px /** zoosemy circle size */,
+    14px /** zoosemy dot size */,
+  ),
+  'medium': (
+    32px,
+    14px,
+    22px,
+    11px,
+  ),
+  'small': (
+    28px,
+    12px,
+    20px,
+    10px,
+  ),
+);
+
+@mixin size-content($size) {
+  height: nth($size, 1);
+  font-size: nth($size, 2);
+
+  .#{$radio}__input {
+    width: nth($size, 1);
+    &::before {
+      width: nth($size, 3);
+      height: nth($size, 3);
+    }
+    &::after {
+      width: nth($size, 4);
+      height: nth($size, 4);
+      top: calc(50% - #{nth($size, 4) / 2});
+      left: calc(50% - #{nth($size, 4) / 2});
+    }
+  }
+}
+
+.#{$radio} {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  .#{$radio}__input {
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    position: relative;
+    .#{$radio}__origin {
+      opacity: 0;
+      outline: none;
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: 0;
+    }
+  }
+
+  //Size
+  @each $size-key, $size in $size-list {
+    @if ($size-key == 'medium') {
+      @include size-content($size);
+    } @else {
+      &.is-#{$size-key} {
+        @include size-content($size);
+      }
+    }
+  }
+
+  //type
+  &.is-zoosemy {
+    .#{$radio}__input {
+      &::before {
+        content: '';
+        border-radius: 50%;
+        background-color: #e4ebf5;
+        box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
+        transition: all $animation-duration-fast ease-in-out;
+      }
+      &::after {
+        content: '';
+        border-radius: 50%;
+        background-color: #9baacf;
+        transition: all $animation-duration-fast ease-in-out;
+        position: absolute;
+        z-index: 1;
+      }
+    }
+    &:not(.is-disabled) {
+      &:hover,
+      &:focus,
+      &:active {
+        .#{$radio}__input {
+          &::after {
+            background-color: $color-primary;
+          }
+        }
+      }
+
+      &.is-checked {
+        .#{$radio}__input {
+          &:before {
+            box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
+              inset -0.1em -0.1em 0.12em #fff;
+          }
+          &::after {
+            background-color: $color-primary;
+          }
+        }
+      }
+    }
+
+    &.is-disabled {
+      .#{$radio}__input {
+        &::before {
+          box-shadow: -0.23em -0.23em 0.5em rgba(255, 255, 255, 25%),
+            0.35em 0.35em 0.7em rgba(174, 174, 192, 0.4);
+        }
+      }
+      &.is-checked {
+        .#{$radio}__input {
+          &::before {
+            box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
+              inset -0.1em -0.1em 0.12em #fff;
+          }
+        }
+      }
+    }
+  }
+
+  //Disabled
+
+  &.is-disabled {
+    cursor: not-allowed;
+    .#{$radio}__input {
+      &::before {
+        background-color: mix($color-white, #eaeaea, 55%);
+      }
+      &::after {
+        background-color: mix(#9baacf, #eaeaea, 55%);
+      }
+    }
+    &.is-checked {
+      .#{$radio}__input {
+        &::after {
+          background-color: mix($color-primary, #eaeaea, 35%);
+        }
+      }
+    }
+  }
+}

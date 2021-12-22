@@ -286,7 +286,7 @@ export const createVirtualElement = function (
         textString = '';
       }
       vChildren.push(child);
-    } else {
+    } else if (typeof child === 'string' || typeof child === 'number') {
       textString += ` ${child}`;
     }
   }
@@ -385,7 +385,7 @@ export const updateProperties = function (
         dom.style = '';
       }
     } else if (currentKey === 'nodeValue') {
-      dom['nodeValue'] = currentValue;
+      dom['nodeValue'] = currentValue || '';
     } else if (currentKey !== 'children') {
       dom[currentKey] = currentValue;
     }

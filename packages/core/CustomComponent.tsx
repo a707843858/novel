@@ -1,5 +1,5 @@
 import VNode from './VNode';
-import { Watch } from './decorators/decorators';
+import { Watch } from './decorators';
 import 'reflect-metadata';
 // import { reactiveData } from './reactiveData';
 
