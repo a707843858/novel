@@ -338,6 +338,7 @@ export const createElement = function (vnode: VNode) {
   } else {
     let typeName = typeof vnode.type === 'function' ? vnode.type() : vnode.type;
     el = document.createElement(typeName);
+    //<K extends keyof HTMLElementTagNameMap>
   }
 
   if (vnode.props) {
@@ -359,7 +360,6 @@ export const updateProperties = function (
   const updateByKey = (currentKey: string, oldKey: string) => {
     let oldValue = oldProps[oldKey] || '',
       currentValue = props[currentKey] || '';
-
     if (currentValue instanceof Function || oldValue instanceof Function) {
       if (!oldValue && currentValue) {
         dom.addEventListener(
@@ -386,7 +386,9 @@ export const updateProperties = function (
       }
     } else if (currentKey === 'nodeValue') {
       dom['nodeValue'] = currentValue || '';
-    } else if (currentKey !== 'children') {
+    } else if (currentKey === 'children') {
+      dom['$children'] = currentValue;
+    } else {
       dom[currentKey] = currentValue;
     }
   };
@@ -411,7 +413,7 @@ export const updateProperties = function (
 
 export function Fragment(type: any, props: any, children: any) {
   // console.log('kk');
-  console.log(type, props, children, 'k');
+  // console.log(type, props, children, 'k');
 
   return 'template';
 }

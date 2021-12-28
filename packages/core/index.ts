@@ -1,17 +1,13 @@
-import { define, defineComponent } from './define';
-import { CustomComponent } from './CustomComponent';
-// import { createElement, createVirtualElement } from './element';
-import NovelElement from '@/core/novelElement';
-import { createVirtualElement, Fragment } from './newElement';
+import { register } from './register';
+import NovelElement from './novelElement';
+import { createVirtualElement, Fragment } from './element';
 import { Prop, Component, State } from './decorators';
 
 export {
-  define,
   // createElement,
   NovelElement,
   Component,
-  CustomComponent,
-  defineComponent,
+  register,
   createVirtualElement,
   Prop,
   State,

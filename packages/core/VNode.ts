@@ -1,5 +1,3 @@
-import component from '@/component';
-
 export type VNodeElement = HTMLElement | Text | null | undefined;
 export type VNodeKey = string | number | null;
 export type VNodePath =

@@ -3,6 +3,8 @@ export function insertBefore(
   newNode?: HTMLElement | null | Text,
   referenceNode?: HTMLElement | null | Text,
 ) {
+  //@ts-ignore
+  // console.log(newNode, newNode?.tagName, 'kl');
   if (referenceNode && newNode && parentNode) {
     parentNode.insertBefore(newNode, referenceNode);
   } else if (parentNode && newNode) {

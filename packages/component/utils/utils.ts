@@ -9,19 +9,11 @@ export const isNum = (val: any) => {
   return isNumber;
 };
 
-/** */
-export function definedComponent(name: string, context: any) {
-  if (customElements) {
-    name = name.charAt(0).toLowerCase() + humpToLine(name.substring(1));
-    if (!window.customElements.get(`n-${name}`)) {
-      window.customElements.define(`n-${name}`, context);
-    }
-  } else {
-    throw Error("Don't support customElements");
-  }
-}
-
 /** 驼峰转划线 */
 export function humpToLine(str: string, separator: string = '-') {
   return str.replace(/([A-Z])/g, `${separator}$1`).toLowerCase();
+}
+
+export function camelCaseToHyphen(str: string) {
+  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }

@@ -1,8 +1,9 @@
 import Style from './style/index.scss';
-import { Component, Prop } from '@/core';
+import { Component, Prop, NovelElement, State } from '@/core';
 import { isNum } from '../utils/utils';
 import { tuple } from '@/component/utils/types';
 import classnames from 'classnames';
+import * as buffer from 'buffer';
 
 const BadgeTypes = tuple('zoosemy');
 const BadgeThemes = tuple('danger', 'success', 'info', 'warning', '');
@@ -14,16 +15,17 @@ export type BadgeTheme = typeof BadgeThemes[number];
   mode: 'closed',
   style: Style.toString(),
 })
-export class Badge extends HTMLElement {
+export class Badge extends NovelElement {
   @Prop() type?: BadgeType;
   @Prop() theme: BadgeTheme = 'danger';
   @Prop() value?: number | string;
   @Prop() max: number = 0;
   @Prop() dot?: boolean;
   @Prop() zoosemy?: boolean;
+  @State() aa?: boolean;
 
   render() {
-    const { value, max, dot, theme, type } = this;
+    const { value, max, dot, theme, type, subChild } = this;
     const classNames = classnames(
       'n-badge',
       type && `is-${type}`,
@@ -43,11 +45,12 @@ export class Badge extends HTMLElement {
       }
       return '';
     };
+
     return (
       <div className={classNames}>
         {NodeDot()}
         {NodeContext()}
-        <slot> </slot>
+        {subChild || <slot></slot>}
       </div>
     );
   }

@@ -1,10 +1,4 @@
-import { pushComponentQueue } from './newElement';
 import 'reflect-metadata';
-import { Reactive } from './reactiveData';
-import VNode from '@/core/VNode';
-
-let componentUid: number = 1;
-
 export interface ComponentOptions extends ElementDefinitionOptions {
   name: string;
   mode?: 'closed' | 'open';
@@ -24,7 +18,10 @@ export function Prop(type?: any | Function[]) {
     Reflect.defineMetadata('props', props, target);
 
     /** propNames */
-    const propNames = Reflect.getMetadata('propNames', target) || [];
+    const propNames = Reflect.getMetadata('propNames', target) || [
+      // 'props',
+      'subChild',
+    ];
     propNames.push(key);
     Reflect.defineMetadata('propNames', propNames, target);
   };
@@ -80,8 +77,8 @@ export function Watch(fnName: string, parameter?: any) {
 
 export function State() {
   return (target: any, key: string) => {
-    const states = Reflect.getMetadata('states', target) || [];
+    const states = Reflect.getMetadata('stateNames', target) || [];
     states.push(key);
-    Reflect.defineMetadata('states', states, target);
+    Reflect.defineMetadata('stateNames', states, target);
   };
 }

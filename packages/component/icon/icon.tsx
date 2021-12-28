@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { tuple } from '../utils/types';
 import { isNum } from '../utils/utils';
 import Style from './style/index.scss';
-import { Component, CustomComponent, Prop } from '@/core';
+import { Component, NovelElement, Prop } from '@/core';
 import chroma from 'chroma-js';
 
 const IconRotateTypes = tuple('horizontal', 'vertical', 'both', 90, 180, 270);
@@ -15,7 +15,7 @@ export type IconAnimationType = typeof IconAnimationTypes[number];
   mode: 'closed',
   style: Style.toString(),
 })
-export class Icon extends HTMLElement {
+export class Icon extends NovelElement {
   readonly version: string = '6.0.0-beta3-free';
   @Prop() name: string = '';
   @Prop() animation?: IconAnimationType;

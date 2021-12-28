@@ -7,7 +7,7 @@ const createTransformer = require('./babel/novelPlugin.js');
 
 module.exports = {
   devtool: 'source-map',
-  entry: path.join(__dirname, 'packages/index.ts'),
+  entry: path.join(__dirname, 'packages/index.tsx'),
   output: {
     path: path.join(__dirname, './public'),
     filename: 'novel.js',
@@ -24,10 +24,10 @@ module.exports = {
   //   minimize:true,
   // },
   devServer: {
-    port: 80,
+    port: 81,
     hot: true,
     static: {
-      directory: path.join(__dirname, 'packages'),
+      directory: path.join(__dirname, 'public'),
       // directory: path.join(__dirname, 'public'),
     },
   },

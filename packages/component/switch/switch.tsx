@@ -1,8 +1,7 @@
-import { Component, Prop, State } from '@/core';
+import { Component, Prop, State, NovelElement } from '@/core';
 import { tuple } from '../utils/types';
 import Style from './style/index.scss';
 import classnames from 'classnames';
-import { NovelElement } from '@/core';
 
 const SwitchSizeTypes = tuple('large', 'small');
 export type SwitchSizeType = typeof SwitchSizeTypes[number];
@@ -25,20 +24,15 @@ export class Switch extends NovelElement {
   @Prop() inactiveText: string | number = '';
   @State() active: boolean = false;
 
-  // constructor() {
-  //   super(Switch);
-  // }
-
   beforeCreate() {
     const { activeValue, value } = this;
-    this.active = value === activeValue;
+    this.active = value === activeValue ? true : false;
   }
 
   handleClick() {
     const { disabled } = this;
     if (!disabled) {
       this.active = !this.active;
-      console.log(this.active, 'value');
     }
   }
 

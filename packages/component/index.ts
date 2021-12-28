@@ -1,5 +1,6 @@
 import Style from './style/bowser.scss';
-import { definedComponent } from './utils/utils';
+import { camelCaseToHyphen } from './utils/utils';
+import { register } from '@/core';
 import { Button } from './button';
 import { Icon } from './icon';
 import { Badge } from './badge';
@@ -12,14 +13,22 @@ export interface useProps {
   components?: { [k: string]: any };
 }
 
-const components: { [k: string]: any } = {
-  Switch,
-  Button,
-  Icon,
-  Badge,
-  Radio,
-  RadioGroup,
-}; //,  Link
+const componentTag: string[] = [
+    'Switch',
+    'Button',
+    'Icon',
+    'Badge',
+    'Radio',
+    'RadioGroup',
+  ],
+  components: { [k: string]: any } = {
+    Switch,
+    Button,
+    Icon,
+    Badge,
+    Radio,
+    RadioGroup,
+  }; //,  Link
 
 export const version = '1.0';
 
@@ -31,20 +40,12 @@ export const use = function (props: useProps = {}) {
     document.getElementsByTagName('head')?.item(0)?.appendChild(style);
   }
   //Register component
-  if (
-    !props.components ||
-    Object.getOwnPropertyNames(props.components).length == 0
-  ) {
-    for (let key in components) {
-      definedComponent(key, components[key]);
-    }
-  } else {
-    const len = props.components.length || 0;
-    for (let i = 0; i < len; i++) {
-      let key = props.components[i];
-      definedComponent(key, components[key]);
-    }
-  }
+  const componentNams = props.components || Object.keys(components);
+  componentNams.forEach((key: string) => {
+    let elCont = components[key];
+    key = 'n-' + camelCaseToHyphen(key);
+    register(key, elCont);
+  });
 };
 
 export default {

@@ -1,4 +1,4 @@
-import { Component, CustomComponent, Prop } from '../../core';
+import { Component, NovelElement, Prop } from '../../core';
 import classnames from 'classnames';
 import Style from './style/index.scss';
 
@@ -7,7 +7,7 @@ import Style from './style/index.scss';
   mode: 'closed',
   style: Style.toString(),
 })
-export class Link extends CustomComponent {
+export class Link extends NovelElement {
   @Prop() href: string = '';
   @Prop() disabled: boolean = false;
   @Prop() icon: string = '';

@@ -1,7 +1,7 @@
 import Style from './style/index.scss';
 import classnames from 'classnames';
 import { tuple } from '../utils/types';
-import { Component, Prop } from '@/core';
+import { Component, Prop, NovelElement } from '@/core';
 
 const ButtonSizeTypes = tuple('large', 'small');
 const ButtonThemeTypes = tuple(
@@ -23,7 +23,7 @@ export type ButtonNativeType = 'button' | 'submit' | 'reset' | undefined;
   mode: 'closed',
   style: Style.toString(),
 })
-export class Button extends HTMLElement {
+export class Button extends NovelElement {
   @Prop() size: ButtonSizeType = '';
   @Prop() disabled: boolean = false;
   @Prop() loading: boolean = false;

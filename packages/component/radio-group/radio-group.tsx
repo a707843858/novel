@@ -1,4 +1,4 @@
-import { Component, Prop, State } from '@/core';
+import { Component, Prop, State, NovelElement } from '@/core';
 import Style from './style/index.scss';
 import classNames from 'classnames';
 import { tuple } from '@/component/utils/types';
@@ -21,7 +21,7 @@ export type RadioType = typeof RadioTypes[number];
   mode: 'closed',
   style: Style.toString(),
 })
-export default class RadioGroup extends HTMLElement {
+export default class RadioGroup extends NovelElement {
   //@ts-ignore
   readonly isRadioGroup: boolean = true;
   @Prop() defaultValue: any = '';
@@ -40,6 +40,7 @@ export default class RadioGroup extends HTMLElement {
 
   render() {
     const { disabled, size, type } = this;
+    console.log(this.children, 'k');
     return (
       <div
         className={classNames(
