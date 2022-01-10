@@ -1,40 +1,37 @@
 @import '../../style/index.scss';
-$size-list: (
+$radio-size-list: (
   'large': (
-    40px /** Height */,
-    16px /** Font size */,
-    28px /** zoosemy circle size */,
-    14px /** zoosemy dot size */,
+    zoosemy-circle: 28px,
+    zoosemy-dot: 14px,
   ),
   'medium': (
-    32px,
-    14px,
-    22px,
-    11px,
+    zoosemy-circle: 22px,
+    zoosemy-dot: 12px,
   ),
   'small': (
-    28px,
-    12px,
-    20px,
-    10px,
+    zoosemy-circle: 20px,
+    zoosemy-dot: 10px,
   ),
 );
+$color-active: $color-primary;
+$color-inactive: #9baacf;
 
-@mixin size-content($size) {
-  height: nth($size, 1);
-  font-size: nth($size, 2);
+@mixin size-content($key, $size) {
+  $result: map-get($radio-size-list, $key);
+  height: map-get($size, 'height');
+  font-size: map-get($size, 'font-size');
 
   .#{$radio}__input {
-    width: nth($size, 1);
+    width: map-get($size, 'height');
     &::before {
-      width: nth($size, 3);
-      height: nth($size, 3);
+      width: map-get($result, 'zoosemy-circle');
+      height: map-get($result, 'zoosemy-circle');
     }
     &::after {
-      width: nth($size, 4);
-      height: nth($size, 4);
-      top: calc(50% - #{nth($size, 4) / 2});
-      left: calc(50% - #{nth($size, 4) / 2});
+      width: map-get($result, 'zoosemy-dot');
+      height: map-get($result, 'zoosemy-dot');
+      top: calc(50% - #{map-get($result, 'zoosemy-dot') / 2});
+      left: calc(50% - #{map-get($result, 'zoosemy-dot') / 2});
     }
   }
 }
@@ -51,6 +48,21 @@ $size-list: (
     justify-content: center;
     margin-right: 10px;
     position: relative;
+    &:before {
+      content: '';
+      background-color: $color-white;
+      border-radius: 50%;
+      transition: all $animation-duration-fast ease-in-out;
+      border: 1px solid $color-inactive;
+    }
+    &::after {
+      content: '';
+      border-radius: 50%;
+      background-color: $color-inactive;
+      transition: all $animation-duration-fast ease-in-out;
+      position: absolute;
+      z-index: 1;
+    }
     .#{$radio}__origin {
       opacity: 0;
       outline: none;
@@ -63,14 +75,42 @@ $size-list: (
       margin: 0;
     }
   }
+  .#{$radio}__label {
+    color: rgb(155, 170, 207);
+  }
+
+  &:not(.is-disabled) {
+    &:hover,
+    &:focus,
+    &:active {
+      .#{$radio}__input {
+        &::before {
+          border: 1px solid $color-active;
+        }
+      }
+    }
+  }
+  &.is-disabled {
+    .#{$radio}__input {
+      &::before {
+        border: 1px solid mix($color-primary, #eaeaea, 35%);
+      }
+    }
+  }
+
+  &.is-checked {
+    .#{$radio}__label {
+      color: rgb(109, 93, 252);
+    }
+  }
 
   //Size
   @each $size-key, $size in $size-list {
     @if ($size-key == 'medium') {
-      @include size-content($size);
+      @include size-content($size-key, $size);
     } @else {
       &.is-#{$size-key} {
-        @include size-content($size);
+        @include size-content($size-key, $size);
       }
     }
   }
@@ -79,40 +119,15 @@ $size-list: (
   &.is-zoosemy {
     .#{$radio}__input {
       &::before {
-        content: '';
-        border-radius: 50%;
-        background-color: #e4ebf5;
-        box-shadow: -0.23em -0.23em 0.5em #ffffffb3, 0.35em 0.35em 0.7em $gray-2;
-        transition: all $animation-duration-fast ease-in-out;
-      }
-      &::after {
-        content: '';
-        border-radius: 50%;
-        background-color: #9baacf;
-        transition: all $animation-duration-fast ease-in-out;
-        position: absolute;
-        z-index: 1;
+        border: none;
+        box-shadow: $zoosemy-shadow-out-light;
       }
     }
     &:not(.is-disabled) {
-      &:hover,
-      &:focus,
-      &:active {
-        .#{$radio}__input {
-          &::after {
-            background-color: $color-primary;
-          }
-        }
-      }
-
       &.is-checked {
         .#{$radio}__input {
           &:before {
-            box-shadow: inset 0.1em 0.1em 0.12em #c8d0e7,
-              inset -0.1em -0.1em 0.12em #fff;
-          }
-          &::after {
-            background-color: $color-primary;
+            box-shadow: $zoosemy-shadow-inset-light;
           }
         }
       }
@@ -137,7 +152,28 @@ $size-list: (
   }
 
   //Disabled
+  &:not(.is-disabled) {
+    &:hover,
+    &:focus,
+    &:active {
+      .#{$radio}__input {
+        &::after {
+          background-color: $color-primary;
+        }
+      }
+      .#{$radio}__label {
+        color: $color-primary;
+      }
+    }
 
+    &.is-checked {
+      .#{$radio}__input {
+        &::after {
+          background-color: $color-primary;
+        }
+      }
+    }
+  }
   &.is-disabled {
     cursor: not-allowed;
     .#{$radio}__input {

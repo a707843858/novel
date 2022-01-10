@@ -1,3 +1,17 @@
+import Icon from './Icon';
+import Badge from './Badge';
+import Button from './Button';
+import Switch from './Switch';
+import Radio from './Radio';
+
 export default function Home() {
-  return <div>Home</div>;
+  return (
+    <div>
+      <Radio />
+      <Switch />
+      <Button />
+      <Badge />
+      <Icon />
+    </div>
+  );
 }

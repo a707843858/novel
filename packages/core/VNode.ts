@@ -1,48 +1,28 @@
-export type VNodeElement = HTMLElement | Text | null | undefined;
-export type VNodeKey = string | number | null;
-export type VNodePath =
-  | 'add'
-  | 'remove'
-  | 'replace'
-  | 'keep'
-  | 'update'
-  | 'insert';
+import { isCustomComponent } from '@/core/element';
 
 export class VNode {
-  type: string | Function = '';
-  props?: { [k: string]: any };
+  readonly isCustomTag: boolean = false;
+  type: VNodeType = '';
+  props: { [k: string]: any } = {};
   key?: VNodeKey;
   element?: VNodeElement;
   children?: VNode[];
+  parent?: VNode;
   [k: string]: any;
 
-  constructor(props: { [k: string]: any } = {}) {
-    if (props) {
-      for (let p in props) {
-        if (props[p]) {
-          this[p] = props[p];
-        }
+  constructor(props: VNodeProps) {
+    if (!props.type) {
+      throw new Error('VNode must have type  !');
+    }
+    for (let p in props) {
+      if (props[p]) {
+        this[p] = props[p];
       }
     }
+    if (typeof props.type === 'string') {
+      this.isCustomTag = isCustomComponent(props.type);
+    }
   }
-
-  // setAttribute(key:string,val:any){
-  //   const {element} = this;
-  //   if(element instanceof  HTMLElement){
-  //     element?.setAttribute(key,val);
-  //   }else if(element instanceof Text){
-  //     element['nodeValue'] = val ;
-  //   }
-  // }
-  //
-  // removeAttribute(key:string){
-  //   const {element} = this;
-  //   if(element instanceof  HTMLElement){
-  //     element?.removeAttribute(key);
-  //   }else if(element instanceof Text){
-  //     element?.parentNode?.removeChild(element)
-  //   }
-  // }
 }
 
 export default VNode;

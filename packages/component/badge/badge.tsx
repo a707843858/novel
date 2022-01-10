@@ -25,7 +25,7 @@ export class Badge extends NovelElement {
   @State() aa?: boolean;
 
   render() {
-    const { value, max, dot, theme, type, subChild } = this;
+    const { value, max, dot, theme, type, $children } = this;
     const classNames = classnames(
       'n-badge',
       type && `is-${type}`,
@@ -50,7 +50,7 @@ export class Badge extends NovelElement {
       <div className={classNames}>
         {NodeDot()}
         {NodeContext()}
-        {subChild || <slot></slot>}
+        {$children || <slot />}
       </div>
     );
   }

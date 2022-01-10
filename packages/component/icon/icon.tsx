@@ -40,19 +40,7 @@ export class Icon extends NovelElement {
     const sizeStr = size && isNum(size) ? `${size}px` : size;
     const style = { fontSize: sizeStr, color, textShadow };
     return <i className={classNames} style={style}></i>;
-    // return (
-    //   <div
-    //     className={classNames}
-    //     style={{ fontSize: sizeStr ,color:color}}
-    //     //@ts-ignore
-    //     innerHTML={inner}
-    //   >
-    //     {/* {inner} */}
-    //   </div>
-    // );
   }
 }
-
-customElements.define('n-icon', Icon);
 
 export default Icon;

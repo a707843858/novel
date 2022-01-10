@@ -4,6 +4,7 @@ import Icon from '../views/Icon';
 import Button from '../views/Button';
 import Badge from '../views/Badge';
 import Switcher from '../views/Switch';
+import Radio from '../views/Radio';
 
 export default function App(): any {
   return (
@@ -23,6 +24,9 @@ export default function App(): any {
         </Route>
         <Route path="/switch" exact>
           <Switcher />
+        </Route>
+        <Route path="/radio">
+          <Radio />
         </Route>
       </Switch>
     </BrowserRouter>

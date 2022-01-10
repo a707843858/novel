@@ -23,7 +23,9 @@
       padding: 20px;
     "
   >
-  <div id="app"></div>
+  <div id="app"><div class="a">1</div></div>
+  <div id="cc"></div>
+
 
     <!--单选按钮-->
 <!--    <div class="demo-line">-->
@@ -70,12 +72,12 @@
 <!--    </div>-->
 
     <!--徽章 未完成-->
-    <div class="demo-line">
-      <n-badge dot="true">
-        <div>
-          <n-button>A</n-button>
-        </div>
-      </n-badge>
+<!--    <div class="demo-line">-->
+<!--      <n-badge dot="true">-->
+<!--        <div>-->
+<!--          <n-button>A</n-button>-->
+<!--        </div>-->
+<!--      </n-badge>-->
 <!--      <n-badge value="1">-->
 <!--        <n-button>A</n-button>-->
 <!--      </n-badge>-->
@@ -97,7 +99,7 @@
 <!--      <n-badge dot="true" type="zoosemy">-->
 <!--        <n-button >A</n-button>-->
 <!--      </n-badge>-->
-    </div>
+<!--    </div>-->
 
     <!-- 开关 -->
 <!--    <div class="demo-line">-->
@@ -115,6 +117,13 @@
     <!-- <svg>
 			<use xlink:href="brands.svg#500px"></use>
 		</svg> -->
+  <script>
+    const a = document.getElementById('app');
+    const b = a.children[0];
+    console.log(b);
+    document.getElementById('cc').append(b)
+
+  </script>
   <script src="./_novel.js"></script>
   <script src="./_novel.web.js"></script>
   </body>

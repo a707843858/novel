@@ -21,6 +21,7 @@ export function Prop(type?: any | Function[]) {
     const propNames = Reflect.getMetadata('propNames', target) || [
       // 'props',
       'subChild',
+      'children',
     ];
     propNames.push(key);
     Reflect.defineMetadata('propNames', propNames, target);

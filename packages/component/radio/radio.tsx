@@ -67,7 +67,7 @@ export default class Radio extends NovelElement {
   // }
 
   render() {
-    const { value, checked, name, type, size, disabled } = this;
+    const { value, checked, name, type, size, disabled, $children } = this;
     return (
       <div
         className={classnames(
@@ -90,13 +90,9 @@ export default class Radio extends NovelElement {
             aria-hidden="true"
             tabIndex={-1}
             name={name}
-          >
-            {' '}
-          </input>
+          ></input>
         </div>
-        <span className="n-radio__label">
-          <slot> </slot>
-        </span>
+        <span className="n-radio__label">{$children || <slot />}</span>
       </div>
     );
   }

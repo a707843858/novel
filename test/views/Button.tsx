@@ -16,16 +16,16 @@ export default function Button() {
       </div>
       <div className="demo-line">
         <n-button type="zoosemy">Normal</n-button>
-        <n-button type="zoosemy" circle="true">
+        <n-button type="zoosemy" circle={true}>
           A
         </n-button>
-        <n-button theme="primary" type="zoosemy" disabled="true">
+        <n-button theme="primary" type="zoosemy" disabled={true}>
           Primary
         </n-button>
-        <n-button theme="primary" type="zoosemy" round="true">
+        <n-button theme="primary" type="zoosemy" round={true}>
           Round
         </n-button>
-        <n-button theme="primary" type="zoosemy" disabled="true">
+        <n-button theme="primary" type="zoosemy" disabled={true}>
           Disabled
         </n-button>
       </div>

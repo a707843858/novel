@@ -1,5 +1,5 @@
 export function insertBefore(
-  parentNode: HTMLElement,
+  parentNode: HTMLElement | ShadowRoot,
   newNode?: HTMLElement | null | Text,
   referenceNode?: HTMLElement | null | Text,
 ) {

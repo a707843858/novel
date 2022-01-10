@@ -15,7 +15,7 @@ export class Reactive<T extends any> {
         ? //@ts-ignore
           new Proxy(data, {
             set: function (target, key) {
-              console.log('a', '设置');
+              console.log('a', key, '设置');
             },
           })
         : data;
@@ -29,12 +29,8 @@ export class Reactive<T extends any> {
   }
 
   set value(val: T) {
-    console.log(val, 'value');
-    // trigger(this,'value');
-    // debugger;/
     const { _value } = this;
     if (!Object.is(val, _value)) {
-      console.log('出发了', val);
       this._value = val;
       this.updateFn();
     }

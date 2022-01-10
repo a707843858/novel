@@ -121,7 +121,7 @@ module.exports = function (basePath, mode = 'development') {
              </style>
             <script src="./_novel.js"></script>
           </head>
-          <body style=" background: #e4ebf5; text-align: center; padding: 20px; ">
+          <body style="text-align: center; padding: 20px; ">
             <div id="root"></div>
           </body>
         </html>

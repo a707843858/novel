@@ -33,8 +33,9 @@ function transformPlugin(context) {
       }
 
       //Members
+      //TODO:delete subChild after test
       const members = node.members || [],
-        propertyNames = ['subChild'];
+        propertyNames = ['subChild', '$children'];
 
       members.forEach((n) => {
         if (n.kind === ts.SyntaxKind.PropertyDeclaration) {

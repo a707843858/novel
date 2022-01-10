@@ -34,7 +34,7 @@ function transformPlugin(context) {
 
       //Members
       const members = node.members || [],
-        propertyNames = [];
+        propertyNames = ['$children'];
 
       members.forEach((n) => {
         if (n.kind === ts.SyntaxKind.PropertyDeclaration) {

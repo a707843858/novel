@@ -36,6 +36,7 @@ export class Button extends NovelElement {
 
   render() {
     const {
+      $children,
       disabled,
       icon,
       loading,
@@ -71,20 +72,10 @@ export class Button extends NovelElement {
       }
       return '';
     };
-    const NodeButtonWrap = () => {
-      if (this.innerHTML) {
-        return (
-          <span className="n-button_wrapper">
-            <slot></slot>
-          </span>
-        );
-      }
-      return '';
-    };
     return (
       <button disabled={disabled} className={classNames} type={nativeType}>
         {NodeIcon()}
-        {NodeButtonWrap()}
+        <span className="n-button_wrapper">{$children || <slot />}</span>
       </button>
     );
   }

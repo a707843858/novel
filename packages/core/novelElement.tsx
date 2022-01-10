@@ -1,8 +1,7 @@
 import VNode from '@/core/VNode';
 import 'reflect-metadata';
 import { Reactive } from '@/core/reactiveData';
-import { pushComponentQueue } from '@/core/element';
-import { Prop } from '@/core/decorators';
+import { pushComponentQueue } from '@/core/taskQueue';
 
 let componentUid: number = 1;
 
@@ -16,19 +15,17 @@ export class NovelElement extends HTMLElement {
   readonly uid: number = componentUid++;
   //@ts-ignore
   readonly $isNovel: boolean = true;
-  readonly $self: NovelElement;
   readonly $componentName: string = '';
+  $self: NovelElement;
   $vnode?: VNode | null;
   $props: { [k: string]: any } = {};
   $states: { [k: string]: any } = {};
-  $children?: { [k: string]: any } | null;
+  $children?: any;
   $cssStyle?: string /** Only CSS text is supported */;
-  _shadowRoot: ShadowRoot | null = null;
+  $container: ShadowRoot;
   _isUpdate: boolean = false;
   _isInstalled: boolean = false;
   subChild: any;
-  private readonly propNames: string[] = [];
-  private readonly stateNames: string[] = [];
 
   constructor(
     self: any,
@@ -36,15 +33,18 @@ export class NovelElement extends HTMLElement {
   ) {
     super();
     this.$self = self;
-    this._shadowRoot = this.attachShadow({ mode: options.mode });
+    this.$container = this.attachShadow({ mode: options.mode });
     //@ts-ignore
-    this._shadowRoot.target = this;
+    this.$container.target = this;
     this.$cssStyle = options.style;
     this.$componentName = options.name;
     this.propNames = Reflect.getMetadata('propNames', this) || [];
     this.stateNames = Reflect.getMetadata('stateNames', this) || [];
-    // console.log(this,'p')
   }
+  private readonly propNames: string[] = [];
+  private readonly stateNames: string[] = [];
+
+  _children: any;
 
   /** Getter | Setter  */
   get isInstalled() {
@@ -67,14 +67,13 @@ export class NovelElement extends HTMLElement {
     );
   }
 
-  get shadowRoot() {
-    return this._shadowRoot;
-  }
-
-  set shadowRoot(val) {
-    console.error(
-      `It is forbidden to change the value of shadowRoot, but now you set it to ${val}`,
-    );
+  set children(val: any) {
+    const { _isInstalled, $children } = this;
+    if (_isInstalled && $children) {
+      $children.value = this.formatChildren(val);
+    } else {
+      this.$children = this.formatChildren(val);
+    }
   }
 
   /** When the component is added to a document */
@@ -87,20 +86,21 @@ export class NovelElement extends HTMLElement {
 
   createComponent() {
     this.$vnode = this.render() || null;
-    const { _shadowRoot, $vnode } = this;
-    pushComponentQueue(_shadowRoot, undefined, $vnode, () => {
+    const { $container, $vnode, $self } = this;
+    console.log($vnode, '$vnode');
+    pushComponentQueue(this, $container, undefined, $vnode, () => {
       this._isInstalled = true;
     });
   }
 
   updateComponent() {
-    const { _isUpdate, _isInstalled, $vnode, _shadowRoot } = this;
+    const { _isUpdate, _isInstalled, $vnode, $container, $self } = this;
     if (_isUpdate || !_isInstalled) {
       return false;
     }
     this._isUpdate = true;
     const $newVnode: any = this.render() || null;
-    pushComponentQueue(_shadowRoot, $vnode, $newVnode, () => {
+    pushComponentQueue(this, $container, $vnode, $newVnode, () => {
       /** Delete the entire shadowRoot after the child element is deleted */
       if (!$newVnode) {
         this.parentNode?.removeChild(this);
@@ -126,12 +126,36 @@ export class NovelElement extends HTMLElement {
     propNames.forEach((item) => {
       const { $self } = this;
       let val = super.getAttribute(item);
+      //TODO:需补全attribute类型触发事件
+      item = item === 'children' ? '$children' : item;
       //@ts-ignore
       let origin = val || this[item] || $self[item]; //val !== '' ?  : true;
       this.$props[item] = origin;
       //@ts-ignore
       this[item] = new Reactive(origin, () => this.updateComponent());
     });
+  }
+
+  formatChildren(
+    child: any[] | { [k: string]: any } | null | undefined | string,
+  ): VNode[] | undefined {
+    if (child) {
+      child = Array.isArray(child) ? child : [child];
+      child = child.map((current: any) => {
+        if (typeof current === 'object') {
+          let children = current.children || current.props?.children || '';
+          return new VNode({
+            type: current.type,
+            props: current.props,
+            children: children ? this.formatChildren(children) : undefined,
+          });
+        } else {
+          return new VNode({ type: 'TEXT', props: { nodeValue: current } });
+        }
+      });
+    } else {
+      return undefined;
+    }
   }
 
   definedState() {
@@ -160,12 +184,12 @@ export class NovelElement extends HTMLElement {
   }
 
   updateCss() {
-    const { $cssStyle, _shadowRoot } = this;
+    const { $cssStyle, $container } = this;
     if ($cssStyle) {
       let css = $cssStyle.replace(/(\/\/.*$)|(\/\*(.|\s)*?\*\/)/g, '');
       const styleSheet = new CSSStyleSheet();
       styleSheet.replaceSync(css);
-      _shadowRoot && (_shadowRoot.adoptedStyleSheets = [styleSheet]);
+      $container && ($container.adoptedStyleSheets = [styleSheet]);
     }
   }
 
@@ -184,7 +208,6 @@ export class NovelElement extends HTMLElement {
       super.setAttribute(key, value);
     }
     //@ts-ignore
-    console.log(this[key], key, value, 'l');
   }
 
   removeAttribute(key: string) {
