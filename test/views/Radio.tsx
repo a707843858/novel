@@ -21,11 +21,14 @@ export default function Radio() {
       {/*  </n-radio>*/}
       {/*</div>*/}
       <div className="demo-line">
-        <n-radio-group size="large" OnChange={changeHandler()}>
+        <n-radio-group size="large" OnChange={() => changeHandler()}>
           <n-radio value="1" name="a">
             Medium
           </n-radio>
-          <n-radio value="1" name="a" disabled="true">
+          <n-radio value="2" name="a">
+            Medium
+          </n-radio>
+          <n-radio value="3" name="a" disabled="true">
             Medium
           </n-radio>
         </n-radio-group>

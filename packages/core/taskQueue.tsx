@@ -144,12 +144,13 @@ export function differentElement() {
         );
         matchedNode = undefined;
       } else {
+        newStartNode.parent = currentComponent?.target.$self;
         patchElement(
           container,
           undefined,
           newStartNode,
           oldList,
-          oldStartIndex,
+          newStartIndex,
         );
       }
       // 如果移动后不删除旧数据则需+1
@@ -184,13 +185,11 @@ export function patchElement(
     return;
   }
 
-  const preIndex =
-    newIndex > nodeList.length - 1 ? nodeList.length - 1 : newIndex;
-  const preNode = nodeList[preIndex];
+  const preNode = nodeList[newIndex];
   const preEl = (preNode && preNode.element) || undefined;
 
   if (!oldNode && newNode) {
-    newNode.element = createElement(newNode);
+    newNode.element = createElement(newNode, currentComponent?.target);
     nodeList?.splice(newIndex, 0, newNode);
     insertBefore(container, newNode.element, preEl);
     patchChildren(newNode.element, undefined, newNode.children);
@@ -209,7 +208,7 @@ export function patchElement(
       newNode.element = oldNode.element;
       oldNode.element = undefined;
     } else {
-      newNode.element = createElement(newNode);
+      newNode.element = createElement(newNode, currentComponent?.target);
       updateProperties(newNode);
       if (oldNode.element) {
         oldNode.element.parentNode?.removeChild(oldNode.element);

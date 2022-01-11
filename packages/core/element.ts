@@ -48,7 +48,7 @@ export const createVirtualElement = function (
   type: any,
   props: { [k: string]: any },
   ...children: Array<any>
-) {
+): VNode {
   let textString = '';
   const vChildren: VNode[] = [];
 
@@ -98,44 +98,58 @@ export const createVirtualElement = function (
   });
 };
 
-export const createElement = function (vnode: VNode) {
-  let el;
-
+export const createElement = function (vnode: VNode, target?: any) {
   if (!vnode.type) {
     return;
   }
 
   if (vnode.type === 'TEXT' && vnode.props?.nodeValue) {
-    el = document.createTextNode(
+    vnode.element = document.createTextNode(
       JSON.stringify(vnode?.props?.nodeValue || vnode) || '',
     );
   } else {
     let typeName = typeof vnode.type === 'function' ? vnode.type() : vnode.type;
-    const isCustomTag = isCustomComponent(typeName);
-    el = document.createElement(typeName);
-    if (isCustomTag) {
-      vnode.$parent = 'a';
-    }
-    //<K extends keyof HTMLElementTagNameMap>
+    vnode.element = document.createElement(typeName);
+    //@ts-ignore
+    vnode.element.uid = vnode.uid;
   }
 
   if (vnode.props) {
-    updateProperties(vnode);
+    updateProperties(vnode, target);
   }
 
-  return el;
+  return vnode.element;
 };
 
-export const updateProperties = function (vnode: VNode) {
+export const updateProperties = function (vnode: VNode, target?: any) {
   if (!vnode.element || !vnode.props) {
     return;
   }
 
+  const el = vnode.element;
+
   Object.keys(vnode.props).forEach((key) => {
     const currentValue = vnode.props[key];
 
-    if (key === 'style' && vnode.element instanceof HTMLElement) {
-      setStyle(vnode.element, currentValue);
+    if (key === 'style' && el instanceof HTMLElement) {
+      setStyle(el, currentValue);
+    } else if (key === 'nodeValue') {
+      el.nodeValue = currentValue;
+    } else if (vnode.isNovelElement && key === 'children') {
+      //@ts-ignore
+      el['$children'] = currentValue;
+    } else if (key.substring(0, 2) === 'on') {
+      const eventKey = key.substring(2).toLowerCase();
+      //TODO:判断是否为方法
+      console.log(key, vnode, 'key');
+      if (target) {
+        const $eventMap = target.$eventMap;
+        $eventMap[eventKey] = $eventMap[eventKey] || {};
+        $eventMap[eventKey][vnode.uid] = vnode;
+      }
+    } else {
+      //@ts-ignore
+      el[key] = currentValue;
     }
   });
 

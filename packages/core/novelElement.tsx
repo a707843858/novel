@@ -3,8 +3,6 @@ import 'reflect-metadata';
 import { Reactive } from '@/core/reactiveData';
 import { pushComponentQueue } from '@/core/taskQueue';
 
-let componentUid: number = 1;
-
 export interface NovelElementOptions {
   name: string;
   mode: 'closed' | 'open';
@@ -12,7 +10,6 @@ export interface NovelElementOptions {
 }
 
 export class NovelElement extends HTMLElement {
-  readonly uid: number = componentUid++;
   //@ts-ignore
   readonly $isNovel: boolean = true;
   readonly $componentName: string = '';
@@ -23,6 +20,7 @@ export class NovelElement extends HTMLElement {
   $children?: any;
   $cssStyle?: string /** Only CSS text is supported */;
   $container: ShadowRoot;
+  $eventMap: { [k: string]: any } = {};
   _isUpdate: boolean = false;
   _isInstalled: boolean = false;
   subChild: any;
@@ -40,6 +38,7 @@ export class NovelElement extends HTMLElement {
     this.$componentName = options.name;
     this.propNames = Reflect.getMetadata('propNames', this) || [];
     this.stateNames = Reflect.getMetadata('stateNames', this) || [];
+    // console.log(this.shadowRoot, 'this');
   }
   private readonly propNames: string[] = [];
   private readonly stateNames: string[] = [];
@@ -70,7 +69,7 @@ export class NovelElement extends HTMLElement {
   set children(val: any) {
     const { _isInstalled, $children } = this;
     if (_isInstalled && $children) {
-      $children.value = this.formatChildren(val);
+      this.$children.value = this.formatChildren(val);
     } else {
       this.$children = this.formatChildren(val);
     }
@@ -85,16 +84,21 @@ export class NovelElement extends HTMLElement {
   }
 
   createComponent() {
-    this.$vnode = this.render() || null;
+    // const $vnode = this.render() as unknown;
+    // this.$vnode = $vnode as VNode;
+    //@ts-ignore
+    this.$vnode = this.render() as VNode;
     const { $container, $vnode, $self } = this;
-    console.log($vnode, '$vnode');
+    // console.log($vnode, '$vnode');
+    // debugger;
     pushComponentQueue(this, $container, undefined, $vnode, () => {
       this._isInstalled = true;
     });
+    console.log(this.$eventMap);
   }
 
   updateComponent() {
-    const { _isUpdate, _isInstalled, $vnode, $container, $self } = this;
+    const { _isUpdate, _isInstalled, $vnode, $container } = this;
     if (_isUpdate || !_isInstalled) {
       return false;
     }
@@ -139,20 +143,26 @@ export class NovelElement extends HTMLElement {
   formatChildren(
     child: any[] | { [k: string]: any } | null | undefined | string,
   ): VNode[] | undefined {
+    const $children: VNode[] = [];
     if (child) {
       child = Array.isArray(child) ? child : [child];
       child = child.map((current: any) => {
         if (typeof current === 'object') {
           let children = current.children || current.props?.children || '';
-          return new VNode({
-            type: current.type,
-            props: current.props,
-            children: children ? this.formatChildren(children) : undefined,
-          });
+          $children.push(
+            new VNode({
+              type: current.type,
+              props: current.props,
+              children: children ? this.formatChildren(children) : undefined,
+            }),
+          );
         } else {
-          return new VNode({ type: 'TEXT', props: { nodeValue: current } });
+          $children.push(
+            new VNode({ type: 'TEXT', props: { nodeValue: current } }),
+          );
         }
       });
+      return $children;
     } else {
       return undefined;
     }
@@ -223,7 +233,7 @@ export class NovelElement extends HTMLElement {
   /** subClass Methods */
   beforeCreate() {}
   created() {}
-  render(): VNode | null | undefined {
+  render(): JSX.Element | null | undefined {
     return null;
   }
 }

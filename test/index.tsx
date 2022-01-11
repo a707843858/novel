@@ -1,7 +1,7 @@
 // @ts-ignore
 import React from '../public/react.development';
 // @ts-ignore
-import { createRoot } from '../public/react-dom.development';
+import { createRoot } from '../public/react-dom.development.dev';
 import Router from './router';
 
 const root = createRoot(document.getElementById('root'));

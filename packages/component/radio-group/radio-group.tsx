@@ -88,6 +88,7 @@ export default class RadioGroup extends NovelElement {
   render() {
     this.$children = this.formatRadio(this.$children);
     const { disabled, size, type, $children } = this;
+    console.log($children, this.isInstalled, '$children');
     return (
       <div
         className={classNames(

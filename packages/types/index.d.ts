@@ -42,7 +42,9 @@ interface VNodeProps {
 
 declare class VNode {
   [k: string]: any;
+  uid: number;
   isCustomTag: boolean;
+  isNovelElement: boolean;
   type: VNodeType;
   props: { [k: string]: any };
   key?: VNodeKey;

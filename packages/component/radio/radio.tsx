@@ -79,7 +79,7 @@ export default class Radio extends NovelElement {
             'is-disabled': disabled,
           },
         )}
-        onClick={this.handlerClick.bind(this)}
+        onClick={() => this.handlerClick()}
       >
         <div className="n-radio__input">
           <input
